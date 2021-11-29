@@ -2,16 +2,17 @@
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build
-WORKDIR /src
+WORKDIR "/src"
+COPY ["Directory.Build.props", "."]
 COPY ["CubeShuffle.Core/CubeShuffle.Core.csproj", "CubeShuffle.Core/"]
 COPY ["CubeShuffle.CLI/CubeShuffle.CLI.csproj", "CubeShuffle.CLI/"]
-RUN dotnet restore "CubeShuffle.CLI/CubeShuffle.CLI.csproj"
+RUN dotnet restore "CubeShuffle.CLI/CubeShuffle.CLI.csproj" --locked-mode
 COPY . .
 WORKDIR "/src/CubeShuffle.CLI"
 RUN dotnet build "CubeShuffle.CLI.csproj" -c Release -o /app/build --no-restore
 
 FROM build AS publish
-RUN dotnet publish "CubeShuffle.CLI.csproj" -c Release -o /app/publish --no-build
+RUN dotnet publish "CubeShuffle.CLI.csproj" -c Release -o /app/publish --no-restore
 
 FROM base AS final
 WORKDIR /app
