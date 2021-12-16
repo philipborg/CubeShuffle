@@ -78,7 +78,7 @@ mod distribution_shuffle {
                         Some(s) => { Some((s, *amount)) }
                     }
                 }).collect();
-            
+
             let randomized_picks = incomplete_pack.get(&None).unwrap_or(&0);
             for _ in 0..*randomized_picks {
                 let card_source = randomized.pop().unwrap();
@@ -98,8 +98,11 @@ mod distribution_shuffle {
     mod tests {
         use std::collections::HashMap;
         use std::time::SystemTime;
+        use rand::prelude::SliceRandom;
         use proptest::collection::hash_map;
         use proptest::prelude::*;
+        use rand::rngs::StdRng;
+        use rand::SeedableRng;
         use crate::distribution_shuffle::distribution_shuffle::{Odds, Pile, shuffle};
 
         prop_compose! {
@@ -137,12 +140,14 @@ mod distribution_shuffle {
             #[test]
             fn shuffled_cards (
                 piles in arb_piles(),
-                pack_size_choice in any::<usize>()
+                seed in any::<u64>()
             ){
-                let mut rng = rand::thread_rng();
+                let mut rng = StdRng::seed_from_u64(seed);
                 let total_card_count:u32 = piles.values().map(|p| p.cards).sum();
+                println!("Card count={}", total_card_count);
                 let pack_sizes = get_valid_pack_sizes(total_card_count);
-                let pack_size = pack_sizes[pack_size_choice % pack_sizes.len()];
+                println!("Possible pack sizes={:?}", pack_sizes);
+                let pack_size = *pack_sizes.choose(&mut rng).unwrap();
                 println!("Pack size={}", pack_size);
 
                 let start_time = SystemTime::now();
