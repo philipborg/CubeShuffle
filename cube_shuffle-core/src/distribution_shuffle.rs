@@ -4,9 +4,12 @@ use std::hash::Hash;
 use rand::{Rng, RngCore};
 use rand::prelude::SliceRandom;
 
+use parse_display::{Display, FromStr};
+
 pub type Odds = f64;
 
-#[derive(Clone, Debug, Copy)]
+#[derive(Clone, Debug, Copy, PartialEq, Display, FromStr)]
+#[display("{cards}:{randomness}")]
 pub struct Pile {
     pub cards: u32,
     pub randomness: Odds,

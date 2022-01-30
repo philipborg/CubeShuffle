@@ -1,1 +1,1 @@
-mod distribution_shuffle;
+pub mod distribution_shuffle;
