@@ -8,13 +8,13 @@ pub type Odds = f64;
 
 #[derive(Clone, Debug, Copy)]
 pub struct Pile {
-    cards: u32,
-    randomness: Odds,
+    pub cards: u32,
+    pub randomness: Odds,
 }
 
 #[derive(Clone, Debug)]
 pub struct Pack<P> {
-    card_sources: HashMap<P, u32>,
+    pub card_sources: HashMap<P, u32>,
 }
 
 pub fn shuffle<'a, P>(
@@ -47,36 +47,25 @@ pub fn shuffle<'a, P>(
         for c in 0..pile.cards {
             let skip: bool = random.gen_bool(pile.randomness);
             if skip {
-                randomized.push(&pile_name);
+                randomized.push(pile_name);
             }
 
             let pack_index: usize = (c % pack_count) as usize;
             *packs[pack_index]
-                .entry(if skip { None } else { Some(&pile_name) })
+                .entry(if skip { None } else { Some(pile_name) })
                 .or_insert(0) += 1;
         }
 
         packs.shuffle(random);
-        packs.sort_by(|a, b|
-            a.values()
-                .sum::<u32>()
-                .cmp(
-                    &b.values()
-                        .sum::<u32>()
-                )
-        );
+        packs.sort_by_key(|k| k.values().sum::<u32>());
     }
 
     randomized.shuffle(random);
     let finalized_packs: Vec<Pack<&P>> = packs.iter().map(|incomplete_pack| {
         let mut card_sources: HashMap<&P, u32> =
             incomplete_pack.iter()
-            .filter_map(|(source, amount)| {
-                match *source {
-                    None => { None }
-                    Some(s) => { Some((s, *amount)) }
-                }
-            }).collect();
+                .filter_map(|(source, amount)| (*source).map(|s| (s, *amount)))
+                .collect();
 
         let randomized_picks = incomplete_pack.get(&None).unwrap_or(&0);
         for _ in 0..*randomized_picks {
@@ -90,7 +79,7 @@ pub fn shuffle<'a, P>(
         }
     }).collect();
 
-    return finalized_packs;
+    finalized_packs
 }
 
 #[cfg(test)]
@@ -116,7 +105,7 @@ mod tests {
             (cards in min_cards..max_cards, odds in arb_odds())
             -> Pile {
             Pile {
-                cards: cards,
+                cards,
                 randomness: odds
             }
         }
@@ -125,7 +114,7 @@ mod tests {
     prop_compose! {
         fn arb_piles
             ()
-            (piles in hash_map(any::<String>(), arb_pile(1, 10_000), 1..100))
+            (piles in hash_map(any::<String>(), arb_pile(1, 1_000), 1..100))
             -> HashMap<String, Pile>{
             piles
         }
@@ -141,6 +130,7 @@ mod tests {
             piles in arb_piles(),
             seed in any::<u64>()
         ){
+            println!("Piles={}", piles.values().count());
             let mut rng = StdRng::seed_from_u64(seed);
             let total_card_count:u32 = piles.values().map(|p| p.cards).sum();
             println!("Card count={}", total_card_count);
@@ -159,7 +149,7 @@ mod tests {
             let card_sources_count:Vec<u32> =
                 shuffled.iter()
                 .flat_map(|p| {p.card_sources.values()})
-                .map(|x| {*x})
+                .copied()
                 .collect();
 
             // All card sources must be positive
