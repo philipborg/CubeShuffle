@@ -6,3 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+getrandom = { version = "0.2", features = ["js"] }
+yew = { git = "https://github.com/yewstack/yew/" }
+cube_shuffle-core = { path = "../cube_shuffle-core" }
