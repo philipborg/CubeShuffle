@@ -1,22 +1,23 @@
 use std::collections::HashMap;
 use std::hash::Hash;
 
+use parse_display::{Display, FromStr};
 use rand::{Rng, RngCore};
 use rand::prelude::SliceRandom;
 
-use parse_display::{Display, FromStr};
+use serde::{Deserialize, Serialize};
 
 pub type Odds = f64;
 
-#[derive(Clone, Debug, Copy, PartialEq, Display, FromStr)]
+#[derive(Clone, Debug, Copy, PartialEq, Display, FromStr, Serialize, Deserialize)]
 #[display("{cards}:{randomness}")]
 pub struct Pile {
     pub cards: u32,
     pub randomness: Odds,
 }
 
-#[derive(Clone, Debug)]
-pub struct Pack<P> {
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Pack<P> where P: Hash + Eq + Serialize {
     pub card_sources: HashMap<P, u32>,
 }
 
@@ -25,7 +26,7 @@ pub fn shuffle<'a, P>(
     pack_size: u32,
     random: &mut impl RngCore)
     -> Vec<Pack<&'a P>>
-    where P: Eq + Hash
+    where P: Eq + Hash + Serialize
 {
     if pack_size == 0 {
         panic!("TODO");
@@ -89,11 +90,13 @@ pub fn shuffle<'a, P>(
 mod tests {
     use std::collections::HashMap;
     use std::time::SystemTime;
-    use rand::prelude::SliceRandom;
+
     use proptest::collection::hash_map;
     use proptest::prelude::*;
+    use rand::prelude::SliceRandom;
     use rand::rngs::StdRng;
     use rand::SeedableRng;
+
     use crate::distribution_shuffle::{Odds, Pile, shuffle};
 
     prop_compose! {
@@ -123,8 +126,8 @@ mod tests {
         }
     }
 
-    fn get_valid_pack_sizes(cards:u32) -> Vec<u32> {
-        (1..=cards).filter(move |d| {cards % d == 0}).collect()
+    fn get_valid_pack_sizes(cards: u32) -> Vec<u32> {
+        (1..=cards).filter(move |d| { cards % d == 0 }).collect()
     }
 
     proptest! {

@@ -1,9 +1,15 @@
 use std::collections::HashMap;
+
 use clap::{AppSettings, Parser, Subcommand};
-use cube_shuffle_core::distribution_shuffle::{Pile, shuffle};
 use parse_display::{Display, FromStr};
 use rand::prelude::StdRng;
 use rand::SeedableRng;
+
+use cube_shuffle_core::distribution_shuffle::{Pile, shuffle};
+
+use crate::output::Formats;
+
+mod output;
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -21,6 +27,12 @@ struct Cli {
     #[clap(value_name = "output format")]
     #[clap(default_value = "PrettyDebug")]
     format: Formats,
+
+    #[clap(short = 'i', long)]
+    indexed: bool,
+
+    #[clap(long)]
+    one_indexed: bool,
 }
 
 #[derive(Subcommand, Debug)]
@@ -37,11 +49,6 @@ enum Commands {
     }
 }
 
-#[derive(Debug, FromStr)]
-enum Formats {
-    Debug,
-    PrettyDebug,
-}
 
 #[derive(Debug, Display, FromStr)]
 #[display("{name}={definition}")]
@@ -63,10 +70,22 @@ fn main() {
                 .map(|p| (&p.name, p.definition))
                 .collect();
             let shuffled = shuffle(&piles_map, *pack_size, &mut rng);
-            match cli.format {
-                Formats::Debug => { println!("{:?}", shuffled)}
-                Formats::PrettyDebug => { println!("{:#?}", shuffled) }
-            }
+            let output = match cli.indexed {
+                true => {
+                    let offset: usize = match cli.one_indexed {
+                        true => { 1 }
+                        false => { 0 }
+                    };
+                    let output_data: HashMap<_, _> = shuffled
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, p)| { (i + offset, p) })
+                        .collect();
+                    output::to_string(cli.format, output_data)
+                }
+                false => { output::to_string(cli.format, shuffled) }
+            };
+            println!("{}", output);
         }
     }
 }

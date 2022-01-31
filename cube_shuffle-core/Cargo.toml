@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 rand = "0.8.4"
 parse-display = "0.5.3"
+serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
 proptest = "1.0.0"
