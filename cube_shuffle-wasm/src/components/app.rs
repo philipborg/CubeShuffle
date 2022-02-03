@@ -5,7 +5,7 @@ use rand::{RngCore, SeedableRng};
 use rand::prelude::StdRng;
 use yew::prelude::*;
 
-use cube_shuffle_core::distribution_shuffle::{Pack, Pile};
+use cube_shuffle_core::distribution_shuffle::{Pack, Pile, ShufflingErrors};
 
 use crate::components::integer_input::IntegerInput;
 use crate::components::pack_list::PackList;
@@ -35,19 +35,33 @@ pub struct App {
     piles: HashMap<String, Pile>,
     state: State,
     seed: u64,
+    error_message: Option<String>,
 }
 
-fn distribute_shuffle(app: &App) -> Vec<Pack<String>> {
+fn distribute_shuffle(app: &App) -> Result<Vec<Pack<String>>, String> {
     let mut rng = StdRng::seed_from_u64(app.seed);
-    let packs = cube_shuffle_core::distribution_shuffle::shuffle(&app.piles, 15, &mut rng);
-    packs.into_iter().map(|pack| {
+    let packs = match cube_shuffle_core::distribution_shuffle::shuffle(&app.piles, 15, &mut rng) {
+        Ok(p) => {p}
+        Err(e) => {
+            return match e {
+                ShufflingErrors::EmptyPacks => {
+                    Err(String::from("Empty pack."))
+                }
+                ShufflingErrors::UndividablePacks{ pack_size, card_count, overflow } => {
+                    Err(format!("{} isn't dividable by {}, it overflows by {}.", card_count, pack_size, overflow))
+                }
+            }
+        }
+    };
+    let owned_packs: Vec<Pack<String>> = packs.into_iter().map(|pack| {
         Pack {
             card_sources: pack.card_sources
                 .into_iter()
                 .map(|(k, v)| { (k.clone(), v) })
                 .collect()
         }
-    }).collect()
+    }).collect();
+    Ok(owned_packs)
 }
 
 impl Component for App {
@@ -60,10 +74,12 @@ impl Component for App {
             piles: HashMap::new(),
             state: State::Piling,
             seed: rng.next_u64(),
+            error_message: None
         }
     }
 
     fn update(&mut self, _: &Context<Self>, msg: Self::Message) -> bool {
+        self.error_message = None;
         match msg {
             Msg::AddPile { name, pile } => {
                 self.piles.insert(name, pile);
@@ -82,9 +98,16 @@ impl Component for App {
                 true
             }
             Msg::Shuffle => {
-                self.state = State::Shuffled {
-                    packs: distribute_shuffle(self)
-                };
+                match distribute_shuffle(self) {
+                    Ok(packs) => {
+                        self.state = State::Shuffled {
+                            packs
+                        }
+                    }
+                    Err(e) => {
+                        self.error_message = Some(e)
+                    }
+                }
                 true
             }
         }
@@ -123,11 +146,21 @@ impl Component for App {
             }
         };
 
+        let error_html: Html = self.error_message
+            .clone()
+            .map_or(html!{}, |e| { return html! {
+                <>
+                    <p>{ e }</p>
+                    <hr/>
+                </>
+            }});
+
         return html! {
             <>
                 <h1>{ "Cube Shuffle" }</h1>
                 <h6><a href="https://github.com/philipborg" target="_blank">{ "by philipborg" }</a></h6>
                 <hr/>
+                { error_html }
                 { content }
             </>
         };

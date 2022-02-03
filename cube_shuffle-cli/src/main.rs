@@ -69,7 +69,7 @@ fn main() {
                 .iter()
                 .map(|p| (&p.name, p.definition))
                 .collect();
-            let shuffled = shuffle(&piles_map, *pack_size, &mut rng);
+            let shuffled = shuffle(&piles_map, *pack_size, &mut rng).unwrap();
             let output = match cli.indexed {
                 true => {
                     let offset: usize = match cli.one_indexed {
