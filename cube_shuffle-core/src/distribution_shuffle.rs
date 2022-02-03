@@ -16,7 +16,7 @@ pub struct Pile {
     pub randomness: Odds,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Pack<P> where P: Hash + Eq + Serialize {
     pub card_sources: HashMap<P, u32>,
 }

@@ -1,5 +1,8 @@
 pub mod app;
-pub mod text_input;
-pub mod integer_input;
-pub mod add_pile;
-pub mod pile_card;
+mod text_input;
+mod integer_input;
+mod add_pile;
+mod pile_card;
+mod piler;
+mod pack_card;
+mod pack_list;
