@@ -32,7 +32,7 @@ jobs:
       - uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features
+          args: --all-features --workspace --all-targets --manifest-path "./src/Cargo.toml"
       - name: Run tests
         run: cargo test --verbose
         working-directory: ./src
