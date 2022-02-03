@@ -16,16 +16,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          path: ./src
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           components: clippy
           override: true
+      - name: Install Trunk
+        run: cargo install --locked trunk
       - name: Build
         run: cargo build --verbose
+        working-directory: ./src
       - uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all-features
       - name: Run tests
         run: cargo test --verbose
+        working-directory: ./src
+      - name: Build
+        run: trunk build --release --dist "$GITHUB_WORKSPACE/wasm_build"
+        working-directory: ./src/cube_shuffle-wasm
+      - uses: actions/upload-artifact@v2
+        with:
+          name: CubeShuffle-wasm
+          path: ./wasm_build
