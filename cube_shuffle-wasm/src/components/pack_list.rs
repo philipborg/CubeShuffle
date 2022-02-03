@@ -16,5 +16,5 @@ pub fn pack_list(props: &Props) -> Html {
             <PackCard { index } pack={ pack.clone() }/>
         }
     }).collect();
-    return packs;
+    packs
 }
