@@ -6,6 +6,7 @@ use rand::{Rng, RngCore};
 use rand::prelude::SliceRandom;
 
 use serde::{Deserialize, Serialize};
+use crate::distribution_shuffle::ShufflingErrors::{EmptyPacks, UndividablePacks};
 
 pub type Odds = f64;
 
@@ -21,24 +22,37 @@ pub struct Pack<P> where P: Hash + Eq + Serialize {
     pub card_sources: HashMap<P, u32>,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum ShufflingErrors {
+    EmptyPacks,
+    UndividablePacks{
+        pack_size: u32,
+        card_count: u32,
+        overflow: u32,
+    },
+}
+
 pub fn shuffle<'a, P>(
     piles: &'a HashMap<P, Pile>,
     pack_size: u32,
     random: &mut impl RngCore)
-    -> Vec<Pack<&'a P>>
+    -> Result<Vec<Pack<&'a P>>, ShufflingErrors>
     where P: Eq + Hash + Serialize
 {
     if pack_size == 0 {
-        panic!("TODO");
+        return Err(EmptyPacks);
     }
     let card_count: u32 = piles.values().map(|p| p.cards).sum();
     let pack_count: u32 = card_count / pack_size;
+
     if pack_count == 0 {
-        panic!("TODO");
+        return Err(UndividablePacks {overflow: pack_size, pack_size, card_count });
     }
+
     let pack_overflow: u32 = card_count % pack_size;
+
     if pack_overflow != 0 {
-        panic!("TODO");
+        return Err(UndividablePacks { pack_size, card_count, overflow: pack_overflow });
     }
 
     let mut packs: Vec<HashMap<Option<&P>, u32>> = Vec::new();
@@ -83,7 +97,7 @@ pub fn shuffle<'a, P>(
         }
     }).collect();
 
-    finalized_packs
+    Ok(finalized_packs)
 }
 
 #[cfg(test)]
@@ -146,7 +160,7 @@ mod tests {
             println!("Pack size={}", pack_size);
 
             let start_time = SystemTime::now();
-            let shuffled = shuffle(&piles, pack_size, &mut rng);
+            let shuffled = shuffle(&piles, pack_size, &mut rng).unwrap();
             match start_time.elapsed() {
                 Ok(elapsed) => {println!("Shuffling took {} seconds", elapsed.as_secs())}
                 Err(e) => {println!("Shuffling time measurement failed: {:?}", e)}
