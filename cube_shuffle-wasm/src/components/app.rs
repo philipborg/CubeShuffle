@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::ops::Rem;
 
 use rand::{RngCore, SeedableRng};
 use rand::prelude::StdRng;
@@ -18,8 +17,10 @@ pub enum Msg {
         pile: Pile,
     },
     UpdateSeed(Option<i128>),
+    UpdatePackSize(Option<i128>),
     Pile,
     Shuffle,
+    Error(String),
 }
 
 #[derive(Clone, PartialEq)]
@@ -36,21 +37,22 @@ pub struct App {
     state: State,
     seed: u64,
     error_message: Option<String>,
+    pack_size: u32,
 }
 
 fn distribute_shuffle(app: &App) -> Result<Vec<Pack<String>>, String> {
     let mut rng = StdRng::seed_from_u64(app.seed);
-    let packs = match cube_shuffle_core::distribution_shuffle::shuffle(&app.piles, 15, &mut rng) {
-        Ok(p) => {p}
+    let packs = match cube_shuffle_core::distribution_shuffle::shuffle(&app.piles, app.pack_size, &mut rng) {
+        Ok(p) => { p }
         Err(e) => {
             return match e {
                 ShufflingErrors::EmptyPacks => {
                     Err(String::from("Empty pack."))
                 }
-                ShufflingErrors::UndividablePacks{ pack_size, card_count, overflow } => {
+                ShufflingErrors::UndividablePacks { pack_size, card_count, overflow } => {
                     Err(format!("{} isn't dividable by {}, it overflows by {}.", card_count, pack_size, overflow))
                 }
-            }
+            };
         }
     };
     let owned_packs: Vec<Pack<String>> = packs.into_iter().map(|pack| {
@@ -74,7 +76,8 @@ impl Component for App {
             piles: HashMap::new(),
             state: State::Piling,
             seed: rng.next_u64(),
-            error_message: None
+            error_message: None,
+            pack_size: 15,
         }
     }
 
@@ -86,11 +89,15 @@ impl Component for App {
                 true
             }
             Msg::UpdateSeed(seed) => {
-                let cut: i128 = seed.unwrap_or(0)
-                    .max(-i128::MAX)
-                    .abs()
-                    .rem(i128::from(u64::MAX));
-                self.seed = cut as u64;
+                self.seed = seed
+                    .and_then(|s| { u64::try_from(s).ok() })
+                    .unwrap_or_else(|| { StdRng::from_entropy().next_u64() });
+                true
+            }
+            Msg::UpdatePackSize(pack_size) => {
+                self.pack_size = pack_size
+                    .and_then(|ps| u32::try_from(ps).ok())
+                    .unwrap_or(15);
                 true
             }
             Msg::Pile => {
@@ -110,6 +117,10 @@ impl Component for App {
                 }
                 true
             }
+            Msg::Error(e) => {
+                self.error_message = Some(e);
+                true
+            }
         }
     }
 
@@ -120,7 +131,7 @@ impl Component for App {
                 let re_pile = link.callback(|_| { Msg::Pile });
                 html! {
                     <>
-                        <button onclick={ re_pile } >{ "Re-pile" }</button>
+                        <button onclick={ re_pile }>{ "Re-pile" }</button>
                         <hr/>
                         <PackList packs={ packs.clone() }/>
                     </>
@@ -129,18 +140,29 @@ impl Component for App {
             State::Piling => {
                 let add_pile = link.callback(|(name, pile)| Msg::AddPile { name, pile });
                 let update_seed = link.callback(Msg::UpdateSeed);
+                let update_pack_size = link.callback(Msg::UpdatePackSize);
                 let on_shuffle = link.callback(|_| Msg::Shuffle);
+                let on_error = link.callback(Msg::Error);
                 html! {
                     <>
+                        <label>{ "Seed" }</label>
                         <IntegerInput
                             value={ i128::from(self.seed) }
                             on_change={ update_seed }
-                            placeholder="Seed"
+                            placeholder="Randomness seed"
                             min={ i128::from(u64::MIN) }
                             max={ i128::from(u64::MAX) }
                         />
+                        <label>{ "Pack size" }</label>
+                        <IntegerInput
+                            value={ i128::from(self.pack_size) }
+                            on_change={ update_pack_size }
+                            placeholder={ "Number of cards per shuffled pack" }
+                            min={ 0 }
+                            max={ i128::from(u32::MAX) }
+                        />
                         <button onclick={ on_shuffle }>{ "Shuffle" }</button>
-                        <Piler piles={ self.piles.clone() } add_pile={ add_pile }/>
+                        <Piler piles={ self.piles.clone() } { add_pile } { on_error }/>
                     </>
                 }
             }
@@ -148,12 +170,14 @@ impl Component for App {
 
         let error_html: Html = self.error_message
             .clone()
-            .map_or(html!{}, |e| { return html! {
+            .map_or(html! {}, |e| {
+                return html! {
                 <>
                     <p>{ e }</p>
                     <hr/>
                 </>
-            }});
+            };
+            });
 
         return html! {
             <>

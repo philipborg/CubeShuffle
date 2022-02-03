@@ -1,6 +1,7 @@
 extern crate core;
 
 use std::panic;
+
 use crate::components::app;
 
 mod components;

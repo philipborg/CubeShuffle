@@ -15,12 +15,13 @@ pub enum Msg {
 #[derive(PartialEq, Properties)]
 pub struct Props {
     pub on_add: Callback<(String, Pile)>,
+    pub on_error: Callback<String>,
 }
 
 pub struct AddPile {
     name: String,
     cards: u32,
-    randomness: Odds,
+    randomness: i128,
 }
 
 impl Component for AddPile {
@@ -30,8 +31,8 @@ impl Component for AddPile {
     fn create(_: &Context<Self>) -> Self {
         Self {
             name: String::new(),
-            cards: 0,
-            randomness: 0.0,
+            cards: 50,
+            randomness: 10,
         }
     }
 
@@ -39,11 +40,12 @@ impl Component for AddPile {
         match msg {
             Msg::Add => {
                 if self.name.is_empty() {
+                    ctx.props().on_error.emit(String::from("Missing pile name."));
                     return false;
                 }
                 let pile = Pile {
                     cards: self.cards,
-                    randomness: self.randomness,
+                    randomness: (self.randomness as Odds) * 0.01,
                 };
                 ctx.props().on_add.emit((self.name.clone(), pile));
                 false
@@ -58,16 +60,8 @@ impl Component for AddPile {
             }
             Msg::UpdateRandomness(randomness) => {
                 self.randomness = match randomness {
-                    None => { 0. }
-                    Some(rand) => {
-                        if rand.is_negative() {
-                            0.
-                        } else if rand > 100 {
-                            1.
-                        } else {
-                            (rand as f64) / 100.
-                        }
-                    }
+                    None => { 0 }
+                    Some(r) => { r.max(0).min(100) }
                 };
                 false
             }
@@ -80,12 +74,15 @@ impl Component for AddPile {
         let update_randomness = ctx.link().callback(Msg::UpdateRandomness);
         let submit = ctx.link().callback(|_| Msg::Add);
         return html! {
-            <>
-                <TextInput on_change={ update_name } value={self.name.clone()}/>
-                <IntegerInput min=0 on_change={ update_cards } step=1/>
-                <IntegerInput min=0 max=100 on_change={ update_randomness } step=5/>
-                <button onclick={submit}>{ "Add" }</button>
-            </>
+            <div>
+                <label>{ "Pile name" }</label>
+                <TextInput on_change={ update_name } value={ self.name.clone() } placeholder={ "Name of the pile" }/>
+                <label>{ "Card count" }</label>
+                <IntegerInput min=0 on_change={ update_cards } step=1 value={ i128::from(self.cards) } placeholder={ "Number of cards in pile" }/>
+                <label>{ "Randomness" }</label>
+                <IntegerInput min=0 max=100 on_change={ update_randomness } step=5 value={ self.randomness } placeholder={ "Percentage of randomness" }/>
+                <button onclick={ submit }>{ "Add" }</button>
+            </div>
         };
     }
 }

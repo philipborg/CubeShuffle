@@ -12,4 +12,4 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.8"
 clap = { version = "3.0.13", features = ["derive", "color", "suggestions"] }
-cube_shuffle-core = { path = "../cube_shuffle-core"}
+cube_shuffle-core = { path = "../cube_shuffle-core" }

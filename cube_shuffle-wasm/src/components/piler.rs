@@ -11,6 +11,7 @@ use crate::components::pile_card::pile_cards;
 pub struct Props {
     pub piles: HashMap<String, Pile>,
     pub add_pile: Callback<(String, Pile)>,
+    pub on_error: Callback<String>,
 }
 
 #[derive(Clone, PartialEq)]
@@ -47,7 +48,7 @@ impl Component for Piler {
         let piles = pile_cards(&ctx.props().piles);
         return html! {
         <>
-            <AddPile on_add={add_pile} />
+            <AddPile on_add={ add_pile } on_error={ &ctx.props().on_error }/>
             <hr/>
             { piles }
         </>
