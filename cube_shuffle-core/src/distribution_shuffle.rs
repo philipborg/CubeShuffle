@@ -4,8 +4,8 @@ use std::hash::Hash;
 use parse_display::{Display, FromStr};
 use rand::{Rng, RngCore};
 use rand::prelude::SliceRandom;
-
 use serde::{Deserialize, Serialize};
+
 use crate::distribution_shuffle::ShufflingErrors::{EmptyPacks, UndividablePacks};
 
 pub type Odds = f64;
@@ -25,7 +25,7 @@ pub struct Pack<P> where P: Hash + Eq + Serialize {
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ShufflingErrors {
     EmptyPacks,
-    UndividablePacks{
+    UndividablePacks {
         pack_size: u32,
         card_count: u32,
         overflow: u32,
@@ -46,7 +46,7 @@ pub fn shuffle<'a, P>(
     let pack_count: u32 = card_count / pack_size;
 
     if pack_count == 0 {
-        return Err(UndividablePacks {overflow: pack_size, pack_size, card_count });
+        return Err(UndividablePacks { overflow: pack_size, pack_size, card_count });
     }
 
     let pack_overflow: u32 = card_count % pack_size;
