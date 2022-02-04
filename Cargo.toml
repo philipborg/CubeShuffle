@@ -4,4 +4,5 @@ members = [
     "cube_shuffle-core",
     "cube_shuffle-cli",
     "cube_shuffle-wasm",
+    "src-tauri",
 ]

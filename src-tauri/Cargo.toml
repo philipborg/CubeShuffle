@@ -1,0 +1,24 @@
+[package]
+name = "cube_shuffle-tauri"
+version = "0.1.0"
+description = "MTG Cube shuffling utility"
+authors = ["Philip Borgström"]
+license = "GNU Affero General Public License v3.0"
+repository = "https://github.com/philipborg/CubeShuffle"
+default-run = "cube_shuffle-tauri"
+edition = "2021"
+build = "src/build.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "1.0.0-beta.4" }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+tauri = { version = "1.0.0-beta.8", features = [] }
+
+[features]
+default = [ "custom-protocol" ]
+custom-protocol = [ "tauri/custom-protocol" ]
