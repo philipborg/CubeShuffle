@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-latest, windows-latest]
+        platform: [ macos-latest, ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v2
@@ -47,12 +47,44 @@ jobs:
       - name: Tauri Build
         run: cargo tauri build
         working-directory: "./src/src-tauri"
+
       - uses: actions/upload-artifact@v2
+        name: Tauri Linux executable
+        if: runner.os == 'Linux'
         with:
-          name: CubeShuffle-Tauri_${{ matrix.platform }}
-          path: |
-            ./src/target/cube-shuffle
-            ./src/target/release/bundle
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}_EXECUTABLE
+          path: ./src/target/cube-shuffle
+      - uses: actions/upload-artifact@v2
+        name: Tauri Linux deb
+        if: runner.os == 'Linux'
+        with:
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.deb
+          path: ./src/target/release/bundle/deb/cube-shuffle*.deb
+      - uses: actions/upload-artifact@v2
+        name: Tauri Linux AppImage
+        if: runner.os == 'Linux'
+        with:
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.AppImage
+          path: ./src/target/release/bundle/appimage/cube-shuffle*.AppImage
+
+      - uses: actions/upload-artifact@v2
+        name: Tauri macOS app
+        if: runner.os == 'macOS'
+        with:
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.app
+          path: ./src/target/release/bundle/macos/CubeShuffle*.App
+      - uses: actions/upload-artifact@v2
+        name: Tauri macOS dmg
+        if: runner.os == 'macOS'
+        with:
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.dmg
+          path: ./src/target/release/bundle/dmg/CubeShuffle*.dmg
+
       - name: Cargo build
         run: cargo build --verbose --locked
         working-directory: ./src
