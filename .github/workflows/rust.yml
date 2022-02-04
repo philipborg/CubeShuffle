@@ -47,6 +47,12 @@ jobs:
       - name: Tauri Build
         run: cargo tauri build
         working-directory: "./src/src-tauri"
+      - uses: actions/upload-artifact@v2
+        with:
+          name: CubeShuffle-Tauri_${{ matrix.platform }}
+          path: |
+            ./src/target/cube-shuffle
+            ./src/target/release/bundle
       - name: Cargo build
         run: cargo build --verbose --locked
         working-directory: ./src
@@ -62,5 +68,5 @@ jobs:
         working-directory: ./src/cube_shuffle-wasm
       - uses: actions/upload-artifact@v2
         with:
-          name: CubeShuffle-wasm
+          name: CubeShuffle-wasm_${{ matrix.platform }}
           path: ./wasm_build
