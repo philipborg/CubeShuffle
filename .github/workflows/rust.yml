@@ -42,15 +42,20 @@ jobs:
             librsvg2-dev
       - name: Install Trunk
         run: cargo install --locked trunk
-      - name: Build
-        run: cargo build --verbose
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: "./src/src-tauri"
+      - name: Cargo build
+        run: cargo build --verbose --locked
         working-directory: ./src
       - uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all-features --workspace --all-targets --manifest-path "./src/Cargo.toml"
       - name: Run tests
-        run: cargo test --verbose
+        run: cargo test --verbose --locked
         working-directory: ./src
       - name: Trunk build
         run: trunk build --release --dist "$GITHUB_WORKSPACE/wasm_build"
@@ -59,8 +64,3 @@ jobs:
         with:
           name: CubeShuffle-wasm
           path: ./wasm_build
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          projectPath: "./src/src-tauri"
