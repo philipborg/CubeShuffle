@@ -44,8 +44,8 @@ jobs:
         run: cargo install --locked trunk
       - name: Install Tauri
         run: cargo install tauri-cli --locked --version ^1.0.0-beta
-      - name: Build Tauri
-        run: cargo tauri build --verbose
+      - name: Tauri Build
+        run: cargo tauri build
         working-directory: "./src/src-tauri"
       - name: Cargo build
         run: cargo build --verbose --locked
