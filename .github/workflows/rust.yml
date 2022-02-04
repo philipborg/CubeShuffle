@@ -42,11 +42,11 @@ jobs:
             librsvg2-dev
       - name: Install Trunk
         run: cargo install --locked trunk
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          projectPath: "./src/src-tauri"
+      - name: Install Tauri
+        run: cargo install tauri-cli --locked --version ^1.0.0-beta
+      - name: Build Tauri
+        run: cargo tauri build --verbose
+        working-directory: "./src/src-tauri"
       - name: Cargo build
         run: cargo build --verbose --locked
         working-directory: ./src
