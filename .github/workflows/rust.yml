@@ -54,7 +54,7 @@ jobs:
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}_EXECUTABLE
-          path: ./src/target/cube-shuffle
+          path: ./src/target/release/cube-shuffle
       - uses: actions/upload-artifact@v2
         name: Tauri Linux deb
         if: runner.os == 'Linux'
@@ -76,7 +76,7 @@ jobs:
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.app
-          path: ./src/target/release/bundle/macos/CubeShuffle*.App
+          path: ./src/target/release/bundle/macos/CubeShuffle*.app
       - uses: actions/upload-artifact@v2
         name: Tauri macOS dmg
         if: runner.os == 'macOS'
