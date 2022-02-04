@@ -1,0 +1,5 @@
+{
+  "build": {
+    "beforeBuildCommand": "rm -f -R \"./src-tauri/websrc\" && mkdir \"./src-tauri/websrc\" && cd \"./cube_shuffle-wasm\" && trunk build --release --dist \"./../src-tauri/websrc\""
+  }
+}
