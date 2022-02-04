@@ -11,9 +11,11 @@ env:
 
 jobs:
   build:
-
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
         with:
@@ -37,10 +39,15 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
         working-directory: ./src
-      - name: Build
+      - name: Trunk build
         run: trunk build --release --dist "$GITHUB_WORKSPACE/wasm_build"
         working-directory: ./src/cube_shuffle-wasm
       - uses: actions/upload-artifact@v2
         with:
           name: CubeShuffle-wasm
           path: ./wasm_build
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: "./src/src-tauri"
