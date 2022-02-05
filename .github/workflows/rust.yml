@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ macos-latest, ubuntu-latest, windows-latest ]
+        platform: [ macos-latest, ubuntu-latest, windows-2022 ]
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v2
