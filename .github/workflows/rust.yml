@@ -1,4 +1,4 @@
-name: Rust
+name: "Rust build & test"
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  SOURCE_PATH: "./src"
 
 jobs:
   build:
@@ -20,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-          path: ./src
+          path: ${{ env.SOURCE_PATH }}
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
@@ -46,7 +47,7 @@ jobs:
         run: cargo install tauri-cli --locked --version ^1.0.0-beta
       - name: Tauri Build
         run: cargo tauri build
-        working-directory: "./src/src-tauri"
+        working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
 
       - uses: actions/upload-artifact@v2
         name: Tauri Linux executable
@@ -54,21 +55,21 @@ jobs:
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}_EXECUTABLE
-          path: ./src/target/release/cube-shuffle
+          path: "${{ env.SOURCE_PATH }}/target/release/cube-shuffle"
       - uses: actions/upload-artifact@v2
         name: Tauri Linux deb
         if: runner.os == 'Linux'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.deb
-          path: ./src/target/release/bundle/deb/cube-shuffle*.deb
+          path: "${{ env.SOURCE_PATH }}/target/release/bundle/deb/cube-shuffle*.deb"
       - uses: actions/upload-artifact@v2
         name: Tauri Linux AppImage
         if: runner.os == 'Linux'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.AppImage
-          path: ./src/target/release/bundle/appimage/cube-shuffle*.AppImage
+          path: "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle*.AppImage"
 
       - uses: actions/upload-artifact@v2
         name: Tauri macOS app
@@ -76,28 +77,28 @@ jobs:
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.app
-          path: ./src/target/release/bundle/macos/CubeShuffle*.app
+          path: "${{ env.SOURCE_PATH }}/target/release/bundle/macos/CubeShuffle*.app"
       - uses: actions/upload-artifact@v2
         name: Tauri macOS dmg
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.dmg
-          path: ./src/target/release/bundle/dmg/CubeShuffle*.dmg
+          path: "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/CubeShuffle*.dmg"
 
       - name: Cargo build
         run: cargo build --verbose --locked
-        working-directory: ./src
+        working-directory: ${{ env.SOURCE_PATH }}
       - uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features --workspace --all-targets --manifest-path "./src/Cargo.toml"
+          args: --all-features --workspace --all-targets --manifest-path "${{ env.SOURCE_PATH }}/Cargo.toml"
       - name: Run tests
         run: cargo test --verbose --locked
-        working-directory: ./src
+        working-directory: ${{ env.SOURCE_PATH }}
       - name: Trunk build
         run: trunk build --release --dist "$GITHUB_WORKSPACE/wasm_build"
-        working-directory: ./src/cube_shuffle-wasm
+        working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
       - uses: actions/upload-artifact@v2
         with:
           name: CubeShuffle-wasm_${{ matrix.platform }}
