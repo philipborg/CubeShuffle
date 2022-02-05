@@ -181,8 +181,18 @@ impl Component for App {
 
         return html! {
             <>
-                <h1>{ "Cube Shuffle" }</h1>
-                <h6><a href="https://github.com/philipborg" target="_blank">{ "by philipborg" }</a></h6>
+                <section class="section">
+                    <div class="container">
+                        <h1 class="title">{ "Cube Shuffle" }</h1>
+                        <p class="subtitle">
+                            <strong><a href="https://github.com/philipborg/CubeShuffle" target="_blank">{ "Code" }</a></strong>
+                            { " and "}
+                            <strong><a href="https://github.com/philipborg/CubeShuffle/blob/master/README.md" target="_blank">{ "instructions" }</a></strong>
+                            { " by " }
+                            <strong><a href="https://github.com/philipborg" target="_blank" rel="author">{ "philipborg" }</a></strong>
+                        </p>
+                    </div>
+                </section>
                 <hr/>
                 { error_html }
                 { content }
