@@ -1,5 +1,5 @@
 {
   "build": {
-    "beforeBuildCommand": "pwsh -Command \"if (Test-Path './src-tauri/websrc'){Remove-Item -Force -Recurse './src-tauri/websrc';}; mkdir './src-tauri/websrc'; cd './cube_shuffle-wasm'; trunk build --release --dist './../src-tauri/websrc';\""
+    "beforeBuildCommand": "IF EXIST \".\\src-tauri\\websrc\" (rd /s /q \".\\src-tauri\\websrc\") else (echo \"No websrc to remove\") && mkdir \".\\src-tauri\\websrc\" && cd \".\\cube_shuffle-wasm\" && trunk build --release --dist \".\\..\\src-tauri\\websrc\""
   }
 }
