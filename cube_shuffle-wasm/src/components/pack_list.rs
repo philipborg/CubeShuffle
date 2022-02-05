@@ -13,8 +13,14 @@ pub struct Props {
 pub fn pack_list(props: &Props) -> Html {
     let packs: Html = props.packs.iter().enumerate().map(|(index, pack)| {
         html! {
-            <PackCard { index } pack={ pack.clone() }/>
+            <div class="column is-narrow">
+                <PackCard index={ index + 1 } pack={ pack.clone() }/>
+            </div>
         }
     }).collect();
-    packs
+    return html! {
+        <div class="columns is-multiline is-centered">
+            { packs }
+        </div>
+    };
 }
