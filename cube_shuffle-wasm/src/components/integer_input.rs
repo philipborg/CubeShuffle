@@ -38,6 +38,7 @@ pub fn number_input(props: &Props) -> Html {
 
     html! {
         <input
+            class="input"
             type="number"
             value={ map_number(value) }
             min={ map_number(min) }

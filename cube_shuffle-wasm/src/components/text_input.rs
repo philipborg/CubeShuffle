@@ -29,6 +29,12 @@ pub fn text_input(props: &Props) -> Html {
     });
 
     html! {
-        <input type="text" { value } { oninput } { placeholder }/>
+        <input
+            class="input"
+            type="text"
+            { value }
+            { oninput }
+            { placeholder }
+        />
     }
 }

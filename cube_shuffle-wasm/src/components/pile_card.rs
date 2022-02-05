@@ -15,16 +15,36 @@ pub fn pile_card(props: &Props) -> Html {
     let pile = props.pile;
     let randomness = pile.randomness * 100.0;
     return html! {
-        <div>
-            <label>{ props.name.clone() }</label>
-            <label>{ format!("Cards: {}", pile.cards) }</label>
-            <label>{ format!("Randomness: {}%", randomness) }</label>
+        <div class="column card is-narrow">
+            <div class="card-header-title">
+                <label>{ props.name.clone() }</label>
+            </div>
+            <div class="card-content">
+                <table class="table is-hoverable">
+                    <tbody>
+                        <tr>
+                            <th>{ "Cards" }</th>
+                            <td>{ pile.cards }</td>
+                        </tr>
+                        <tr>
+                            <th>{ "Randomness" }</th>
+                            <td>{ randomness }</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     };
 }
 
 pub fn pile_cards(piles: &HashMap<String, Pile>) -> Html {
-    return piles.iter().map(|(name, pile)| html! {
+    let cards: Html = piles.iter().map(|(name, pile)| html! {
         <PileCard name={ name.clone() } pile={ *pile }/>
     }).collect();
+
+    return html! {
+        <div class="columns is-multiline is-centered">
+            { cards }
+        </div>
+    }
 }

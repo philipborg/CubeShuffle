@@ -8,7 +8,8 @@ use cube_shuffle_core::distribution_shuffle::{Pack, Pile, ShufflingErrors};
 
 use crate::components::integer_input::IntegerInput;
 use crate::components::pack_list::PackList;
-use crate::components::piler::Piler;
+use crate::components::pile_card::pile_cards;
+use crate::components::add_pile::AddPile;
 
 #[derive(Clone, PartialEq)]
 pub enum Msg {
@@ -127,42 +128,63 @@ impl Component for App {
     fn view(&self, ctx: &Context<Self>) -> Html {
         let link = ctx.link();
         let content = match &self.state {
-            State::Shuffled { packs } => {
-                let re_pile = link.callback(|_| { Msg::Pile });
-                html! {
-                    <>
-                        <button onclick={ re_pile }>{ "Re-pile" }</button>
-                        <hr/>
-                        <PackList packs={ packs.clone() }/>
-                    </>
-                }
-            }
             State::Piling => {
                 let add_pile = link.callback(|(name, pile)| Msg::AddPile { name, pile });
                 let update_seed = link.callback(Msg::UpdateSeed);
                 let update_pack_size = link.callback(Msg::UpdatePackSize);
                 let on_shuffle = link.callback(|_| Msg::Shuffle);
                 let on_error = link.callback(Msg::Error);
+                let piles = pile_cards(&self.piles);
                 html! {
                     <>
-                        <label>{ "Seed" }</label>
-                        <IntegerInput
-                            value={ i128::from(self.seed) }
-                            on_change={ update_seed }
-                            placeholder="Randomness seed"
-                            min={ i128::from(u64::MIN) }
-                            max={ i128::from(u64::MAX) }
-                        />
-                        <label>{ "Pack size" }</label>
-                        <IntegerInput
-                            value={ i128::from(self.pack_size) }
-                            on_change={ update_pack_size }
-                            placeholder={ "Number of cards per shuffled pack" }
-                            min={ 0 }
-                            max={ i128::from(u32::MAX) }
-                        />
-                        <button onclick={ on_shuffle }>{ "Shuffle" }</button>
-                        <Piler piles={ self.piles.clone() } { add_pile } { on_error }/>
+                        <div class="level">
+                            <div class="level-left">
+                                <div class="field">
+                                    <label class="label">{ "Seed" }</label>
+                                    <div class="control">
+                                        <IntegerInput
+                                            value={ i128::from(self.seed) }
+                                            on_change={ update_seed }
+                                            placeholder="Randomness seed"
+                                            min={ i128::from(u64::MIN) }
+                                            max={ i128::from(u64::MAX) }
+                                        />
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">{ "Pack size" }</label>
+                                    <div class="control">
+                                        <IntegerInput
+                                            value={ i128::from(self.pack_size) }
+                                            on_change={ update_pack_size }
+                                            placeholder={ "Number of cards per shuffled pack" }
+                                            min={ 0 }
+                                            max={ i128::from(u32::MAX) }
+                                        />
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="control">
+                                        <button class="button is-success" onclick={ on_shuffle }>{ "Shuffle" }</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="level-right">
+                                <AddPile { on_error } on_add={ add_pile }/>
+                            </div>
+                        </div>
+                        <hr/>
+                        { piles }
+                    </>
+                }
+            }
+            State::Shuffled { packs } => {
+                let re_pile = link.callback(|_| { Msg::Pile });
+                html! {
+                    <>
+                        <button class="button is-danger" onclick={ re_pile }>{ "Re-pile" }</button>
+                        <hr/>
+                        <PackList packs={ packs.clone() }/>
                     </>
                 }
             }

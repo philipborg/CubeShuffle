@@ -48,7 +48,8 @@ impl Component for AddPile {
                     randomness: (self.randomness as Odds) * 0.01,
                 };
                 ctx.props().on_add.emit((self.name.clone(), pile));
-                false
+                self.name = String::new();
+                true
             }
             Msg::UpdateName(name) => {
                 self.name = name;
@@ -74,15 +75,31 @@ impl Component for AddPile {
         let update_randomness = ctx.link().callback(Msg::UpdateRandomness);
         let submit = ctx.link().callback(|_| Msg::Add);
         return html! {
-            <div>
-                <label>{ "Pile name" }</label>
-                <TextInput on_change={ update_name } value={ self.name.clone() } placeholder={ "Name of the pile" }/>
-                <label>{ "Card count" }</label>
-                <IntegerInput min=0 on_change={ update_cards } step=1 value={ i128::from(self.cards) } placeholder={ "Number of cards in pile" }/>
-                <label>{ "Randomness" }</label>
-                <IntegerInput min=0 max=100 on_change={ update_randomness } step=5 value={ self.randomness } placeholder={ "Percentage of randomness" }/>
-                <button onclick={ submit }>{ "Add" }</button>
-            </div>
+            <>
+                <div class="field">
+                    <label class="label">{ "Pile name" }</label>
+                    <div class="control">
+                        <TextInput on_change={ update_name } value={ self.name.clone() } placeholder={ "Name of the pile" }/>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">{ "Card count" }</label>
+                    <div class="control">
+                        <IntegerInput min=0 on_change={ update_cards } step=1 value={ i128::from(self.cards) } placeholder={ "Number of cards in pile" }/>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">{ "Randomness" }</label>
+                    <div class="control">
+                        <IntegerInput min=0 max=100 on_change={ update_randomness } step=5 value={ self.randomness } placeholder={ "Percentage of randomness" }/>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-primary" onclick={ submit }>{ "Add" }</button>
+                    </div>
+                </div>
+            </>
         };
     }
 }
