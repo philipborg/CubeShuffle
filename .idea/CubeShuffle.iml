@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/cube_shuffle-cli/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cube_shuffle-core/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cube_shuffle-wasm/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src-tauri/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
