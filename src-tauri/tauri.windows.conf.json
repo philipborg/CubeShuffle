@@ -1,5 +1,5 @@
 {
   "build": {
-    "beforeBuildCommand": "src-tauri\\beforeBuildCommand.cmd"
+    "beforeBuildCommand": "echo https://github.com/tauri-apps/tauri/pull/3334"
   }
 }
