@@ -28,6 +28,9 @@ jobs:
           target: wasm32-unknown-unknown
           components: clippy
           override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          working-directory: ${{ env.SOURCE_PATH }}
       - name: Install webkit/GTK dependencies (Linux)
         if: matrix.platform == 'ubuntu-latest'
         run: |
