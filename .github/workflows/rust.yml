@@ -49,7 +49,7 @@ jobs:
       - name: Install Tauri
         run: cargo install tauri-cli --locked --version ^1.0.0-beta
 
-      - name: 'Windows workaround https://github.com/tauri-apps/tauri/pull/3334'
+      - name: Windows CMD workaround
         run: trunk build --release --dist "./../src-tauri/websrc"
         if: runner.os == 'Windows'
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
