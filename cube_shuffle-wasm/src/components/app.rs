@@ -8,7 +8,7 @@ use cube_shuffle_core::distribution_shuffle::{Pack, Pile, ShufflingErrors};
 
 use crate::components::integer_input::IntegerInput;
 use crate::components::pack_list::PackList;
-use crate::components::pile_card::pile_cards;
+use crate::components::pile_list::PileList;
 use crate::components::add_pile::AddPile;
 
 #[derive(Clone, PartialEq)]
@@ -17,6 +17,7 @@ pub enum Msg {
         name: String,
         pile: Pile,
     },
+    DelPile(String),
     UpdateSeed(Option<i128>),
     UpdatePackSize(Option<i128>),
     Pile,
@@ -122,6 +123,10 @@ impl Component for App {
                 self.error_message = e;
                 true
             }
+            Msg::DelPile(pile) => {
+                self.piles.remove(&pile);
+                true
+            }
         }
     }
 
@@ -130,11 +135,11 @@ impl Component for App {
         let content = match &self.state {
             State::Piling => {
                 let add_pile = link.callback(|(name, pile)| Msg::AddPile { name, pile });
+                let delete_pile = link.callback(Msg::DelPile);
                 let update_seed = link.callback(Msg::UpdateSeed);
                 let update_pack_size = link.callback(Msg::UpdatePackSize);
                 let on_shuffle = link.callback(|_| Msg::Shuffle);
                 let on_error = link.callback(|e| Msg::Error(Some(e)));
-                let piles = pile_cards(&self.piles);
                 html! {
                     <>
                         <div class="columns is-multiline is-centered">
@@ -173,7 +178,7 @@ impl Component for App {
                                 <AddPile { on_error } on_add={ add_pile }/>
                             </div>
                         </div>
-                        { piles }
+                        <PileList piles={ self.piles.to_owned() } { delete_pile }/>
                     </>
                 }
             }
