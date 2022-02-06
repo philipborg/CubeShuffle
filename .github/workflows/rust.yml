@@ -113,10 +113,10 @@ jobs:
         run: cargo test --verbose --locked
         working-directory: ${{ env.SOURCE_PATH }}
       - name: Trunk build
-        run: trunk build --release --dist "${{ env.GITHUB_WORKSPACE }}/wasm_build"
+        run: trunk build --release --dist "${{ github.workspace }}/wasm_build"
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
       - uses: actions/upload-artifact@v2
         with:
           name: CubeShuffle-wasm_${{ matrix.platform }}
           if-no-files-found: error
-          path: "${{ env.GITHUB_WORKSPACE }}/wasm_build"
+          path: "${{ github.workspace }}/wasm_build"
