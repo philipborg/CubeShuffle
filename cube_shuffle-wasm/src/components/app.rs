@@ -21,7 +21,7 @@ pub enum Msg {
     UpdatePackSize(Option<i128>),
     Pile,
     Shuffle,
-    Error(String),
+    Error(Option<String>),
 }
 
 #[derive(Clone, PartialEq)]
@@ -119,7 +119,7 @@ impl Component for App {
                 true
             }
             Msg::Error(e) => {
-                self.error_message = Some(e);
+                self.error_message = e;
                 true
             }
         }
@@ -133,7 +133,7 @@ impl Component for App {
                 let update_seed = link.callback(Msg::UpdateSeed);
                 let update_pack_size = link.callback(Msg::UpdatePackSize);
                 let on_shuffle = link.callback(|_| Msg::Shuffle);
-                let on_error = link.callback(Msg::Error);
+                let on_error = link.callback(|e| Msg::Error(Some(e)));
                 let piles = pile_cards(&self.piles);
                 html! {
                     <>
@@ -188,13 +188,15 @@ impl Component for App {
             }
         };
 
+        let clear_error = link.callback(|_| { Msg::Error(None) });
         let error_html: Html = self.error_message
             .clone()
             .map_or(html! {}, |e| {
                 return html! {
-                <>
+                <div class="notification is-danger">
+                    <button onclick={ clear_error } class="delete"></button>
                     <p>{ e }</p>
-                </>
+                </div>
             };
             });
 
