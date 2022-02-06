@@ -143,3 +143,8 @@ jobs:
         run: |
           cordova platform add android --no-telemetry --verbose
           cordova build android --device --release --no-telemetry --verbose
+      - uses: actions/upload-artifact@v2
+        with:
+          name: CubeShuffle-Cordova-Android
+          if-no-files-found: error
+          path: "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/platforms/android/app/build/outputs/bundle/release/app-release.aab"
