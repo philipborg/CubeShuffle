@@ -140,4 +140,6 @@ jobs:
           path: "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/www"
       - name: Build Android
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-cordova"
-        run: cordova build android --device --release
+        run: |
+          cordova platform add android --no-telemetry --verbose
+          cordova build android --device --release --no-telemetry --verbose
