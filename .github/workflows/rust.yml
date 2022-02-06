@@ -11,7 +11,7 @@ env:
   SOURCE_PATH: "./src"
 
 jobs:
-  build:
+  rust-build:
     strategy:
       fail-fast: false
       matrix:
@@ -120,3 +120,22 @@ jobs:
           name: CubeShuffle-wasm_${{ matrix.platform }}
           if-no-files-found: error
           path: "${{ github.workspace }}/wasm_build"
+
+  cordova-build:
+    container:
+      image: beevelop/cordova:latest
+    runs-on: ubuntu-latest
+    needs: [rust-build]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          path: ${{ env.SOURCE_PATH }}
+      - name: Download compiled WASM
+        uses: actions/download-artifact@v2
+        with:
+          name: CubeShuffle-wasm_ubuntu-latest
+          path: "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/www"
+      - name: Build Android
+        working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-cordova"
+        run: cordova build android --device --release
