@@ -137,8 +137,8 @@ impl Component for App {
                 let piles = pile_cards(&self.piles);
                 html! {
                     <>
-                        <div class="level">
-                            <div class="level-left">
+                        <div class="columns is-multiline is-centered">
+                            <div class="column is-narrow">
                                 <div class="field">
                                     <label class="label">{ "Seed" }</label>
                                     <div class="control">
@@ -169,11 +169,10 @@ impl Component for App {
                                     </div>
                                 </div>
                             </div>
-                            <div class="level-right">
+                            <div class="column is-narrow">
                                 <AddPile { on_error } on_add={ add_pile }/>
                             </div>
                         </div>
-                        <hr/>
                         { piles }
                     </>
                 }
@@ -183,7 +182,6 @@ impl Component for App {
                 html! {
                     <>
                         <button class="button is-danger" onclick={ re_pile }>{ "Re-pile" }</button>
-                        <hr/>
                         <PackList packs={ packs.clone() }/>
                     </>
                 }
@@ -196,17 +194,16 @@ impl Component for App {
                 return html! {
                 <>
                     <p>{ e }</p>
-                    <hr/>
                 </>
             };
             });
 
         return html! {
             <>
-                <section class="section">
+                <section class="section has-background-black-ter">
                     <div class="container">
-                        <h1 class="title">{ "Cube Shuffle" }</h1>
-                        <p class="subtitle">
+                        <h1 class="title has-text-light">{ "Cube Shuffle" }</h1>
+                        <p class="subtitle has-text-grey-light">
                             <strong><a href="https://github.com/philipborg/CubeShuffle" target="_blank">{ "Code" }</a></strong>
                             { " and "}
                             <strong><a href="https://github.com/philipborg/CubeShuffle/blob/master/README.md" target="_blank">{ "instructions" }</a></strong>
@@ -215,7 +212,6 @@ impl Component for App {
                         </p>
                     </div>
                 </section>
-                <hr/>
                 { error_html }
                 { content }
             </>
