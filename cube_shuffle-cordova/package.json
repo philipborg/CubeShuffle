@@ -1,0 +1,23 @@
+{
+  "name": "com.philipborg.cubeshuffle",
+  "displayName": "CubeShuffle",
+  "version": "0.1.0",
+  "description": "MTG Cube shuffling utility.",
+  "main": "AGPL-3.0-or-later",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Philip Borgström",
+  "license": "GNU Affero General Public License v3.0 or later",
+  "devDependencies": {
+    "cordova-android": "^10.1.1"
+  },
+  "cordova": {
+    "platforms": [
+      "android"
+    ]
+  }
+}
