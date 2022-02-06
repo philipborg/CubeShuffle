@@ -80,6 +80,14 @@ jobs:
           path: "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle*.AppImage"
 
       - uses: actions/upload-artifact@v2
+        name: Tauri Windows Installer
+        if: runner.os == 'Windows'
+        with:
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.msi
+          path: "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi"
+
+      - uses: actions/upload-artifact@v2
         name: Tauri macOS app
         if: runner.os == 'macOS'
         with:
@@ -110,4 +118,5 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: CubeShuffle-wasm_${{ matrix.platform }}
-          path: ./wasm_build
+          if-no-files-found: error
+          path: "$GITHUB_WORKSPACE/wasm_build"
