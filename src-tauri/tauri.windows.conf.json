@@ -1,5 +1,5 @@
 {
   "build": {
-    "beforeBuildCommand": "IF EXIST \".\\src-tauri\\websrc\" (rd /s /q \".\\src-tauri\\websrc\") else (echo \"No websrc to remove\") && mkdir \".\\src-tauri\\websrc\" && cd \".\\cube_shuffle-wasm\" && trunk build --release --dist \".\\..\\src-tauri\\websrc\""
+    "beforeBuildCommand": "echo https://github.com/tauri-apps/tauri/pull/3334"
   }
 }

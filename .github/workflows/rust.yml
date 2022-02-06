@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ macos-latest, ubuntu-latest ]
+        platform: [ macos-latest, ubuntu-latest, windows-2022 ]
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v2
@@ -48,6 +48,11 @@ jobs:
         run: cargo install --locked trunk
       - name: Install Tauri
         run: cargo install tauri-cli --locked --version ^1.0.0-beta
+
+      - name: Windows CMD workaround
+        run: trunk build --release --dist "./../src-tauri/websrc"
+        if: runner.os == 'Windows'
+        working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
       - name: Tauri Build
         run: cargo tauri build
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
@@ -75,6 +80,14 @@ jobs:
           path: "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle*.AppImage"
 
       - uses: actions/upload-artifact@v2
+        name: Tauri Windows Installer
+        if: runner.os == 'Windows'
+        with:
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.msi
+          path: "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi"
+
+      - uses: actions/upload-artifact@v2
         name: Tauri macOS app
         if: runner.os == 'macOS'
         with:
@@ -100,9 +113,10 @@ jobs:
         run: cargo test --verbose --locked
         working-directory: ${{ env.SOURCE_PATH }}
       - name: Trunk build
-        run: trunk build --release --dist "$GITHUB_WORKSPACE/wasm_build"
+        run: trunk build --release --dist "${{ github.workspace }}/wasm_build"
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
       - uses: actions/upload-artifact@v2
         with:
           name: CubeShuffle-wasm_${{ matrix.platform }}
-          path: ./wasm_build
+          if-no-files-found: error
+          path: "${{ github.workspace }}/wasm_build"
