@@ -148,42 +148,42 @@ jobs:
             x86_64-unknown-netbsd,
         ]
         include:
-          - x86_64-unknown-linux-gnu
+          - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-          - aarch64-unknown-linux-musl
+          - target: aarch64-unknown-linux-musl
             os: ubuntu-latest
-          - i686-unknown-linux-gnu
+          - target: i686-unknown-linux-gnu
             os: ubuntu-latest
-          - aarch64-unknown-linux-gnu
+          - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
-          - arm-unknown-linux-gnueabi
+          - target: arm-unknown-linux-gnueabi
             os: ubuntu-latest
-          - arm-unknown-linux-gnueabihf
+          - target: arm-unknown-linux-gnueabihf
             os: ubuntu-latest
-          - armv7-unknown-linux-gnueabihf
+          - target: armv7-unknown-linux-gnueabihf
             os: ubuntu-latest
-          - riscv64gc-unknown-linux-gnu
+          - target: riscv64gc-unknown-linux-gnu
             os: ubuntu-latest
-          - x86_64-unknown-linux-musl
+          - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
 
-          - x86_64-pc-windows-msvc
+          - target: x86_64-pc-windows-msvc
             os: windows-2022
-          - x86_64-pc-windows-gnu
+          - target: x86_64-pc-windows-gnu
             os: windows-2022
-          - i686-pc-windows-msvc
+          - target: i686-pc-windows-msvc
             os: windows-2022
-          - i686-pc-windows-gnu
+          - target: i686-pc-windows-gnu
             os: windows-2022
-          - aarch64-pc-windows-msvc
+          - target: aarch64-pc-windows-msvc
             os: windows-2022
 
-          - x86_64-apple-darwin
+          - target: x86_64-apple-darwin
             os: macos-latest
-          - aarch64-apple-darwin
+          - target: aarch64-apple-darwin
             os: macos-latest
 
-          - x86_64-unknown-netbsd
+          - target: x86_64-unknown-netbsd
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
