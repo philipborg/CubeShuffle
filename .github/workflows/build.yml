@@ -205,6 +205,8 @@ jobs:
           target: ${{ matrix.target }}
           override: true
       - uses: Swatinem/rust-cache@v1
+        with:
+          key: ${{ matrix.target }}
       - uses: actions-rs/cargo@v1
         name: Compile
         with:
