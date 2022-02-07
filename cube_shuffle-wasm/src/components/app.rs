@@ -213,7 +213,7 @@ impl Component for App {
                         <p class="subtitle has-text-grey-light">
                             <strong><a href="https://github.com/philipborg/CubeShuffle" target="_blank">{ "Code" }</a></strong>
                             { " and "}
-                            <strong><a href="https://github.com/philipborg/CubeShuffle/blob/master/README.md" target="_blank">{ "instructions" }</a></strong>
+                            <strong><a href="https://github.com/philipborg/CubeShuffle/blob/master/README.adoc" target="_blank">{ "instructions" }</a></strong>
                             { " by " }
                             <strong><a href="https://github.com/philipborg" target="_blank" rel="author">{ "philipborg" }</a></strong>
                         </p>
