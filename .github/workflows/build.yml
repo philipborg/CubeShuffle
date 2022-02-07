@@ -121,6 +121,51 @@ jobs:
         run: cargo test --verbose --locked --release --no-fail-fast
         working-directory: ${{ env.SOURCE_PATH }}
 
+  cli-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [
+            'x86_64-unknown-linux-gnu',
+            'aarch64-unknown-linux-musl',
+            'i686-unknown-linux-gnu',
+            'aarch64-unknown-linux-gnu',
+            'arm-unknown-linux-gnueabi',
+            'arm-unknown-linux-gnueabihf',
+            'armv7-unknown-linux-gnueabihf',
+            'riscv64gc-unknown-linux-gnu',
+
+            'x86_64-pc-windows-msvc',
+            'x86_64-pc-windows-gnu',
+            'i686-pc-windows-msvc',
+            'i686-pc-windows-gnu',
+            'aarch64-pc-windows-msvc',
+
+            'x86_64-apple-darwin',
+            'aarch64-apple-darwin',
+
+            'x86_64-unknown-freebsd',
+            'x86_64-unknown-linux-musl',
+            'x86_64-unknown-netbsd',
+        ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          path: ${{ env.SOURCE_PATH }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: ${{ matrix.target }}
+          override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          working-directory: ${{ env.SOURCE_PATH }}
+      - name: Build
+        working-directory: ${{ env.SOURCE_PATH }}/cube_shuffle-cli
+        run: cargo build --release --locked --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
+
   cordova-build:
     container:
       image: beevelop/cordova:latest
