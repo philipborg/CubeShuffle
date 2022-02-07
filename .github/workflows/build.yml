@@ -162,9 +162,11 @@ jobs:
       - uses: Swatinem/rust-cache@v1
         with:
           working-directory: ${{ env.SOURCE_PATH }}
-      - name: Build
-        working-directory: ${{ env.SOURCE_PATH }}/cube_shuffle-cli
-        run: cargo build --release --locked --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --release --locked --bin cube_shuffle-cli --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
 
   cordova-build:
     container:
