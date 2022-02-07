@@ -13,13 +13,12 @@ pub struct Props {
 #[function_component(PileList)]
 pub fn pile_card(props: &Props) -> Html {
     let cards: Html = props.piles.iter().map(|(name, pile)| {
-        let del = props.delete_pile.reform(|_| {name.to_owned()});
         return html! {
             <div class="column is-narrow">
                 <PileCard
                     name={ name.clone() }
                     pile={ *pile }
-                    delete={ del }
+                    delete={ &props.delete_pile }
                 />
             </div>
         };
