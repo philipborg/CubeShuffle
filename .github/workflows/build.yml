@@ -150,41 +150,58 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
+            cross: true
           - target: aarch64-unknown-linux-musl
             os: ubuntu-latest
+            cross: true
           - target: i686-unknown-linux-gnu
             os: ubuntu-latest
+            cross: true
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
+            cross: true
           - target: arm-unknown-linux-gnueabi
             os: ubuntu-latest
+            cross: true
           - target: arm-unknown-linux-gnueabihf
             os: ubuntu-latest
+            cross: true
           - target: armv7-unknown-linux-gnueabihf
             os: ubuntu-latest
+            cross: true
           - target: riscv64gc-unknown-linux-gnu
             os: ubuntu-latest
+            cross: true
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
+            cross: true
 
           - target: x86_64-pc-windows-msvc
             os: windows-2022
+            cross: true
           - target: x86_64-pc-windows-gnu
             os: windows-2022
+            cross: true
           - target: i686-pc-windows-msvc
             os: windows-2022
+            cross: true
           - target: i686-pc-windows-gnu
             os: windows-2022
+            cross: true
           - target: aarch64-pc-windows-msvc
             os: windows-2022
+            cross: true
 
           - target: x86_64-apple-darwin
             os: macos-latest
+            cross: false
           - target: aarch64-apple-darwin
             os: macos-latest
+            cross: false
 
           - target: x86_64-unknown-netbsd
             os: ubuntu-latest
+            cross: true
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -199,7 +216,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         name: Compile
         with:
-          use-cross: true
+          use-cross: ${{ matrix.cross }}
           command: build
           args: --release --locked --bin cube_shuffle-cli --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
 
