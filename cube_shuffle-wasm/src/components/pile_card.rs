@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use yew::prelude::*;
 
 use cube_shuffle_core::distribution_shuffle::Pile;
@@ -8,45 +6,60 @@ use cube_shuffle_core::distribution_shuffle::Pile;
 pub struct Props {
     pub name: String,
     pub pile: Pile,
+    pub delete: Callback<String>,
 }
 
-#[function_component(PileCard)]
-pub fn pile_card(props: &Props) -> Html {
-    let pile = props.pile;
-    let randomness = pile.randomness * 100.0;
-    return html! {
-        <div class="card">
-            <div class="card-header-title">
-                <label>{ props.name.clone() }</label>
-            </div>
-            <div class="card-content">
-                <table class="table is-hoverable is-fullwidth">
-                    <tbody>
-                        <tr>
-                            <th>{ "Cards" }</th>
-                            <td>{ pile.cards }</td>
-                        </tr>
-                        <tr>
-                            <th>{ "Randomness" }</th>
-                            <td>{ randomness }</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    };
+pub enum Msg {
+    Delete
 }
 
-pub fn pile_cards(piles: &HashMap<String, Pile>) -> Html {
-    let cards: Html = piles.iter().map(|(name, pile)| html! {
-        <div class="column is-narrow">
-            <PileCard name={ name.clone() } pile={ *pile }/>
-        </div>
-    }).collect();
+pub struct PileCard {
+}
 
-    return html! {
-        <div class="columns is-multiline is-centered">
-            { cards }
-        </div>
+impl Component for PileCard {
+    type Message = Msg;
+    type Properties = Props;
+
+    fn create(_: &Context<Self>) -> Self {
+        Self{}
+    }
+
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+        let props = ctx.props();
+        match msg {
+            Msg::Delete => {
+                props.delete.emit(props.name.to_owned());
+                true
+            }
+        }
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let props = ctx.props();
+        let delete = ctx.link().callback(|_| Msg::Delete);
+        let pile = props.pile;
+        let randomness = pile.randomness * 100.0;
+        return html! {
+            <article class="message is-medium">
+                <div class="message-header">
+                    <label>{ props.name.clone() }</label>
+                    <button class="delete" onclick={ delete }></button>
+                </div>
+                <div class="message-body has-background-white">
+                    <table class="table is-fullwidth">
+                        <tbody>
+                            <tr>
+                                <th>{ "Cards" }</th>
+                                <td>{ pile.cards }</td>
+                            </tr>
+                            <tr>
+                                <th>{ "Randomness" }</th>
+                                <td>{ randomness }</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        };
     }
 }
