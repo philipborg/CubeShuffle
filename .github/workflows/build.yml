@@ -103,15 +103,12 @@ jobs:
           path: "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/CubeShuffle*.dmg"
 
       - name: Cargo build
-        run: cargo build --verbose --locked
+        run: cargo build --verbose --locked --release
         working-directory: ${{ env.SOURCE_PATH }}
       - uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all-features --workspace --all-targets --manifest-path "${{ env.SOURCE_PATH }}/Cargo.toml"
-      - name: Run tests
-        run: cargo test --verbose --locked
-        working-directory: ${{ env.SOURCE_PATH }}
       - name: Trunk build
         run: trunk build --release --dist "${{ github.workspace }}/wasm_build"
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
@@ -120,6 +117,9 @@ jobs:
           name: CubeShuffle-wasm_${{ matrix.platform }}
           if-no-files-found: error
           path: "${{ github.workspace }}/wasm_build"
+      - name: Run tests
+        run: cargo test --verbose --locked --release --no-fail-fast
+        working-directory: ${{ env.SOURCE_PATH }}
 
   cordova-build:
     container:
