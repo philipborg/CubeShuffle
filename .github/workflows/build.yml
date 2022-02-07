@@ -215,18 +215,10 @@ jobs:
           args: --release --locked --bin cube_shuffle-cli --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
       - uses: actions/upload-artifact@v2
         name: Upload binary
-        if: runner.os != 'Windows'
         with:
           name: CubeShuffle-cli_${{ matrix.target }}
           if-no-files-found: error
           path: "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli"
-      - uses: actions/upload-artifact@v2
-        name: Upload Windows binary
-        if: runner.os == 'Windows'
-        with:
-          name: CubeShuffle-cli_${{ matrix.target }}
-          if-no-files-found: error
-          path: "${{ github.workspace }}\\cli_build"
 
   cordova-build:
     container:
