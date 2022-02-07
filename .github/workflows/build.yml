@@ -153,15 +153,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-          path: ${{ env.SOURCE_PATH }}
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           target: ${{ matrix.target }}
           override: true
       - uses: Swatinem/rust-cache@v1
-        with:
-          working-directory: ${{ env.SOURCE_PATH }}
       - uses: actions-rs/cargo@v1
         with:
           use-cross: true
