@@ -2,7 +2,7 @@ name: "Rust build & test"
 
 on:
   push:
-    branches: [ '**' ]
+    branches: [ 'master', 'develop' ]
   pull_request:
     branches: [ 'master', 'develop' ]
 
@@ -120,6 +120,113 @@ jobs:
       - name: Run tests
         run: cargo test --verbose --locked --release --no-fail-fast
         working-directory: ${{ env.SOURCE_PATH }}
+
+  cli-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [
+            x86_64-unknown-linux-gnu,
+            aarch64-unknown-linux-musl,
+            i686-unknown-linux-gnu,
+            aarch64-unknown-linux-gnu,
+            arm-unknown-linux-gnueabi,
+            arm-unknown-linux-gnueabihf,
+            armv7-unknown-linux-gnueabihf,
+            riscv64gc-unknown-linux-gnu,
+            x86_64-unknown-linux-musl,
+
+            x86_64-pc-windows-msvc,
+            i686-pc-windows-msvc,
+            aarch64-pc-windows-msvc,
+
+            x86_64-apple-darwin,
+            aarch64-apple-darwin,
+
+            x86_64-unknown-netbsd,
+        ]
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: true
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: true
+          - target: i686-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: true
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: true
+          - target: arm-unknown-linux-gnueabi
+            os: ubuntu-latest
+            cross: true
+          - target: arm-unknown-linux-gnueabihf
+            os: ubuntu-latest
+            cross: true
+          - target: armv7-unknown-linux-gnueabihf
+            os: ubuntu-latest
+            cross: true
+          - target: riscv64gc-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: true
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: true
+
+          - target: x86_64-pc-windows-msvc
+            os: windows-2022
+            cross: false
+          - target: i686-pc-windows-msvc
+            os: windows-2022
+            cross: false
+          - target: aarch64-pc-windows-msvc
+            os: windows-2022
+            cross: false
+
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            cross: false
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            cross: false
+
+          - target: x86_64-unknown-netbsd
+            os: ubuntu-latest
+            cross: true
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: ${{ matrix.target }}
+          override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          key: ${{ matrix.target }}
+      - uses: actions-rs/cargo@v1
+        name: Compile
+        with:
+          use-cross: ${{ matrix.cross }}
+          command: build
+          args: --release --locked --bin cube_shuffle-cli --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
+      - uses: actions/upload-artifact@v2
+        name: Upload binary
+        if: runner.os != 'Windows'
+        with:
+          name: CubeShuffle-cli_${{ matrix.target }}
+          if-no-files-found: error
+          path: "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli"
+      - uses: actions/upload-artifact@v2
+        name: Upload Windows binary
+        if: runner.os == 'Windows'
+        with:
+          name: CubeShuffle-cli_${{ matrix.target }}
+          if-no-files-found: error
+          path: "${{ github.workspace }}\\cli_build\\${{ matrix.target }}\\release\\cube_shuffle-cli.exe"
 
   cordova-build:
     container:
