@@ -1,0 +1,29 @@
+= CubeShuffle Privacy Policy 
+
+The CubeShuffle project only intends to deal with data for functional purposes as described below.
+The CubeShuffle project will not willfully sell nor share your personal data.
+The CubeShuffle doesn't necessarily collect the data described below but reserves the right to do so.
+Before the first time any specific type of personal data or application data is stored CubeShuffle shall inform the user for permission before the data is processed.
+
+== Transparency
+
+CubeShuffle is committed to application and data processing transparency by being https://github.com/philipborg/CubeShuffle[open source licensed] with https://github.com/philipborg/CubeShuffle/blob/master/LICENSE[AGPL-3.0].
+
+== Personal data processed
+
+* User supplied username
+* IP Address
+
+=== Why user supplied username?
+
+CubeShuffle reserves the right to use a username to identify a user for network reliant functionality.
+There is no requirement for this username to reflect any identifying personal information such as personal name.
+
+=== Why IP address?
+
+A server may use IP Addresses to monitor traffic activity.
+This may be used to monitor utilization of the service and throttle traffic from specific addresses to protect the server's operation.
+
+== Application data
+
+CubeShuffle may store functional application data on a server or on the local device for functional needs. This includes functional cookies, saved files, application storage and more. The application data stored is not inherently personal unless the user explicitly inputs such data. The application data may however be linked to a user supplied username which is personal data.
