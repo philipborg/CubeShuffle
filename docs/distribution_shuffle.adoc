@@ -1,0 +1,28 @@
+= Distribution Shuffle
+
+:toc:
+
+== Instructions
+
+=== Define piles
+
+Group your cards into piles based on your desired criteria.
+The recommendation is to have at least 10 cards for good unpredictability and at most as many you can comfortably shuffle.
+The grouping criteria should be based on game mechanical properties.
+A good criteria could be color identity or archetype.
+You may have as many piles as you wish.
+
+==== 360 Card cube example piling
+
+* 50 White cards
+* 50 Blue cards
+* 50 Black cards
+* 50 Red cards
+* 50 Green cards
+* 50 Multicolored cards
+* 30 Nonbasic lands cards
+* 30 Colorless cards
+
+=== Shuffle the piles
+
+Shuffle each pile individually without mixing them. Remember to keep track of which pile is which.
