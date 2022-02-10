@@ -1,0 +1,94 @@
+= Distribution Shuffle
+
+:toc:
+
+== Instructions
+
+=== Define piles
+
+Group your cards into piles based on your desired criteria.
+The recommendation is to have at least 10 cards for good unpredictability and at most as many you can comfortably shuffle.
+The grouping criteria should be based on game mechanical properties.
+A good criteria could be color identity or archetype.
+You may have as many piles as you wish, but all cards should belong to a pile.
+
+==== 360 Card cube example piling
+
+* 50 White cards
+* 50 Blue cards
+* 50 Black cards
+* 50 Red cards
+* 50 Green cards
+* 50 Multicolored cards
+* 30 Nonbasic lands cards
+* 30 Colorless cards
+
+=== Shuffle the piles
+
+Shuffle each pile individually without mixing them.
+Remember to keep track of which pile is which.
+
+=== Register the piles
+
+Register each pile into CubeShuffle.
+Each pile has a specific number of cards and randomness.
+
+==== Cards
+
+The number of cards in the pile.
+
+==== Randomness
+
+This is the chance that the distribution of an individual card from that pile won't be equally distributed.
+It means that it may mix with other piles with randomness.
+Thus for this to have an effect you need at least two piles with randomness.
+With 0% randomness the pile will be equally distributed amongst the packs.
+If all piles have 100% then it's completely random.
+This can be used to control the predictability of the draft.
+Modifying the predictability of different piles changes the feeling of the draft.
+A general recommendation is to have lower randomness on core piles like colors and higher on secondary like artifacts, non-basic lands and multicolored cards.
+Though this varies on the design of the cube.
+Try out what works best for your cube!
+
+===== Randomness groups
+
+This feature isn't developed yet but planned.
+It would allow to defining groups for randomness mixing.
+
+=== Pack content shuffle
+
+Let CubeShuffle shuffle and prepare your packs!
+
+==== Seed
+
+During the shuffle you can set the seed.
+With identical piles and identical seeds the outcome of the pack shuffle will be identical.
+Changing the piles no longer guarantees identical outcome even for the same seed.
+This is only expected to be the case with the same version of CubeShuffle.
+
+=== Pack picking
+
+You will now be presented with a list of packs.
+This is a pack pick order list essentially.
+Each pack lists a number of cards from piles it should include.
+Thus to build each pack you just take as many cards from each pile as described.
+In the GUI versions of CubeShuffle you can mark packs as picked.
+
+=== Pack shuffle
+
+This is technically optional, but it ensures that the ones picking the packs has less knowledge of the composition of the packs.
+The specific cards should already be unknown but the composition of which piles are included can be known.
+This would otherwise in theory allow a player to pick packs with cards from piles they want.
+In practice for casual cube drafts this is rarely a problem, but shuffling the cubes should be rapid.
+What you do is simply reorganize the packs.
+No cards are mixed between the packs.
+
+Tip: If any players didn't help out with the picking then it's time that they pitch in.
+As they have no knowledge of the card distributions in the piles they can just be moved around a bit.
+
+=== Enjoy!
+
+You now have packs ready for drafting!
+Hope you have an excellent draft!
+
+Please star and watch https://github.com/philipborg/CubeShuffle[CubeShuffle on GitHub]!
