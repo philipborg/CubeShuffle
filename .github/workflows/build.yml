@@ -24,7 +24,7 @@ jobs:
           path: ${{ env.SOURCE_PATH }}
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable
           target: wasm32-unknown-unknown
           components: clippy
           override: true
@@ -201,7 +201,7 @@ jobs:
           submodules: 'recursive'
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable
           target: ${{ matrix.target }}
           override: true
       - uses: Swatinem/rust-cache@v1
