@@ -2,7 +2,7 @@
   "name": "com.philipborg.cubeshuffle",
   "displayName": "CubeShuffle",
   "version": "0.1.0",
-  "description": "MTG Cube shuffling utility.",
+  "description": "Card game shuffling utility.",
   "main": "AGPL-3.0-or-later",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

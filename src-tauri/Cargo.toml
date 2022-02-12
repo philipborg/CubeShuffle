@@ -1,7 +1,7 @@
 [package]
 name = "cube_shuffle-tauri"
 version = "0.1.0"
-description = "MTG Cube shuffling utility"
+description = "Card game shuffling utility"
 authors = ["Philip Borgström"]
 license = "GNU Affero General Public License v3.0 or later"
 repository = "https://github.com/philipborg/CubeShuffle"

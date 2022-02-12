@@ -1,12 +1,18 @@
 = CubeShuffle
 
-image:https://img.shields.io/github/workflow/status/philipborg/CubeShuffle/Rust%20build%20&%20test[GitHub Workflow Status]
-image:https://img.shields.io/badge/status-beta-green[Status]
-image:https://img.shields.io/github/license/philipborg/CubeShuffle[GitHub]
-image:https://img.shields.io/badge/platform-Linux--x64%20%7C%20macOS--x64%20%7C%20Windows--x64%20%7C%20Android%20%7C%20Web%2FWasm32-informational[Platforms]
+include::docs/readme/badges.adoc[leveloffset=1]
 
-https://github.com/philipborg/CubeShuffle/subscription[image:https://img.shields.io/github/watchers/philipborg/CubeShuffle?style=social[GitHub watchers]]
-image:https://img.shields.io/github/stars/philipborg/CubeShuffle?style=social[GitHub Repo stars]
-image:https://img.shields.io/github/followers/philipborg?style=social[GitHub followers]
+:toc:
 
-MTG cube shuffle utility
+== Summary
+
+CubeShuffle aims to improve your card game cube shuffling by offering more control over the card distribution/randomness and/or increasing shuffling speed by combining digital and manual shuffling.
+It is designed to be generic for all card games with a cube format but I, the developer, primarily play Magic The Gathering (unaffiliated).
+
+== [#Distribution shuffle]#link:docs/distribution_shuffle.adoc[Distribution shuffle]#
+
+A quick and easy shuffling method for cubes where cards can be assigned to and distributed based upon groups.
+Offers good control over the predictability as it can be controlled from being completely random to evenly distributed.
+Instructions on how to use it are available link:docs/distribution_shuffle.adoc[here].
+
+include::docs/readme/randomness.adoc[leveloffset=1]
