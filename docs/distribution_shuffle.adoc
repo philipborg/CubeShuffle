@@ -9,10 +9,11 @@
 Group your cards into piles based on your desired criteria.
 The recommendation is to have at least 10 cards for good unpredictability and at most as many you can comfortably shuffle.
 The grouping criteria should be based on game mechanical properties.
-A good criteria could be color identity or archetype.
+A good criteria could be color identity in MTG or archetype.
+Consider which categories of cards you want explicit randomness control over and being able to sort them distinctly.
 You may have as many piles as you wish, but all cards should belong to a pile.
 
-==== 360 Card cube example piling
+==== 360 Card MTG cube example piling
 
 * 50 White cards
 * 50 Blue cards
@@ -50,6 +51,12 @@ A general recommendation is to have lower randomness on core piles like colors a
 Though this varies on the design of the cube.
 Try out what works best for your cube!
 
+It should be noted that a 10% randomness for a pile does not mean that 10% of the cards will necessarily be randomly distributed.
+A 10% randomness means that on average 10% of the cards will be randomly placed in available slots.
+Each card has an isolated chance of 10% of being randomized.
+This allows both randomness lower than the pile size to work and prevents anything less than 100% from having definitive certainty.
+However, thanks to link:https://en.wikipedia.org/wiki/Law_of_large_numbers[the law of large numbers] we can still keep it predictable.
+
 ===== Randomness groups
 
 This feature isn't developed yet but planned.
@@ -57,7 +64,7 @@ It would allow to defining groups for randomness mixing.
 
 === Pack content shuffle
 
-Let CubeShuffle shuffle and prepare your packs!
+Let CubeShuffle shuffle and prepare your packs! Click the shuffle button for GUI or execute the CLI command. Below are the configurations available.
 
 ==== Seed
 
@@ -90,5 +97,7 @@ As they have no knowledge of the card distributions in the piles they can just b
 
 You now have packs ready for drafting!
 Hope you have an excellent draft!
+
+Once you are done playing you can just sort the cards used back to their respective pile and keep it stored ready for your next draft.
 
 Please star and watch https://github.com/philipborg/CubeShuffle[CubeShuffle on GitHub]!
