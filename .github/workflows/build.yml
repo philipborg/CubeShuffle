@@ -258,3 +258,12 @@ jobs:
           name: CubeShuffle-Cordova-Android
           if-no-files-found: error
           path: "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/platforms/android/app/build/outputs/bundle/release/app-release.aab"
+
+  publish:
+    needs: [cordova-build, cli-build, rust-build]
+    runs-on: ubuntu-latest
+    #if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v2
+      - name: List artifacts
+        run: ls -R
