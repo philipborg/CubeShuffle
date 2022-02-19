@@ -47,7 +47,7 @@ jobs:
       - name: Install Trunk
         run: cargo install --locked trunk
       - name: Install Tauri
-        run: cargo install tauri-cli --locked --version 1.0.0-rc.4
+        run: cargo install tauri-cli --locked --version 1.0.0-rc.6
 
       - name: Windows CMD workaround
         run: trunk build --release --dist "./../src-tauri/websrc"
