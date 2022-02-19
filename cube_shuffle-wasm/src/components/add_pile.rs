@@ -40,7 +40,9 @@ impl Component for AddPile {
         match msg {
             Msg::Add => {
                 if self.name.is_empty() {
-                    ctx.props().on_error.emit(String::from("Missing pile name."));
+                    ctx.props()
+                        .on_error
+                        .emit(String::from("Missing pile name."));
                     return false;
                 }
                 let pile = Pile {
@@ -61,8 +63,8 @@ impl Component for AddPile {
             }
             Msg::UpdateRandomness(randomness) => {
                 self.randomness = match randomness {
-                    None => { 0 }
-                    Some(r) => { r.max(0).min(100) }
+                    None => 0,
+                    Some(r) => r.max(0).min(100),
                 };
                 false
             }

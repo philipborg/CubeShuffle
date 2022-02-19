@@ -1,6 +1,6 @@
+use cube_shuffle_core::distribution_shuffle::Pile;
 use std::collections::HashMap;
 use yew::prelude::*;
-use cube_shuffle_core::distribution_shuffle::Pile;
 
 use crate::components::pile_card::PileCard;
 
@@ -12,17 +12,21 @@ pub struct Props {
 
 #[function_component(PileList)]
 pub fn pile_card(props: &Props) -> Html {
-    let cards: Html = props.piles.iter().map(|(name, pile)| {
-        return html! {
-            <div class="column is-narrow">
-                <PileCard
-                    name={ name.clone() }
-                    pile={ *pile }
-                    delete={ &props.delete_pile }
-                />
-            </div>
-        };
-    }).collect();
+    let cards: Html = props
+        .piles
+        .iter()
+        .map(|(name, pile)| {
+            return html! {
+                <div class="column is-narrow">
+                    <PileCard
+                        name={ name.clone() }
+                        pile={ *pile }
+                        delete={ &props.delete_pile }
+                    />
+                </div>
+            };
+        })
+        .collect();
 
     return html! {
         <div class="columns is-multiline is-centered">

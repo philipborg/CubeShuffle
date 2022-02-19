@@ -22,7 +22,11 @@ fn get_value_from_input_event(e: InputEvent) -> String {
 
 #[function_component(TextInput)]
 pub fn text_input(props: &Props) -> Html {
-    let Props { value, on_change, placeholder } = props.clone();
+    let Props {
+        value,
+        on_change,
+        placeholder,
+    } = props.clone();
 
     let oninput = Callback::from(move |input_event: InputEvent| {
         on_change.emit(get_value_from_input_event(input_event));

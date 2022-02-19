@@ -25,12 +25,19 @@ fn get_value_from_input_event(e: InputEvent) -> Option<i128> {
 }
 
 fn map_number(value: Option<i128>) -> String {
-    value.map_or_else(String::new, |f| { f.to_string() })
+    value.map_or_else(String::new, |f| f.to_string())
 }
 
 #[function_component(IntegerInput)]
 pub fn number_input(props: &Props) -> Html {
-    let Props { value, on_change, min, max, step, placeholder } = props.clone();
+    let Props {
+        value,
+        on_change,
+        min,
+        max,
+        step,
+        placeholder,
+    } = props.clone();
 
     let oninput = Callback::from(move |input_event: InputEvent| {
         on_change.emit(get_value_from_input_event(input_event));
