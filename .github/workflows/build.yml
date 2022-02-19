@@ -285,6 +285,7 @@ jobs:
           generate_release_notes: true
           draft: true
           fail_on_unmatched_files: true
+          prerelease: true
           files: |
             CubeShuffle-Cordova-Android/CubeShuffle.aab
             CubeShuffle-Tauri_Linux_X64.AppImage/cube-shuffle_*.AppImage
