@@ -5,6 +5,10 @@ on:
     branches: [ 'master', 'develop' ]
   pull_request:
     branches: [ 'master', 'develop' ]
+  create:
+    tags:
+      - v**
+  workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
@@ -262,7 +266,7 @@ jobs:
   publish:
     needs: [cordova-build, cli-build, rust-build]
     runs-on: ubuntu-latest
-    #if: startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/download-artifact@v2
       - name: List artifacts
