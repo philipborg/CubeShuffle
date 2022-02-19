@@ -11,7 +11,6 @@ pub struct Props {
     pub onclick: Callback<usize>,
 }
 
-
 pub enum Msg {
     Clicked,
 }
@@ -39,19 +38,25 @@ impl Component for PackCard {
     fn view(&self, ctx: &Context<Self>) -> Html {
         let props = ctx.props();
         let link = ctx.link();
-        let sources: Html = props.pack.card_sources
+        let sources: Html = props
+            .pack
+            .card_sources
             .iter()
-            .sorted_unstable_by_key(|(name, _)| { name.as_str() })
+            .sorted_unstable_by_key(|(name, _)| name.as_str())
             .map(|(name, amount)| {
                 html! {
-                   <tr>
-                       <th>{ name }</th>
-                       <td>{ amount }</td>
-                   </tr>
-               }
+                    <tr>
+                        <th>{ name }</th>
+                        <td>{ amount }</td>
+                    </tr>
+                }
             })
             .collect();
-        let checked_bg = if props.checked { " has-background-success" } else { "" };
+        let checked_bg = if props.checked {
+            " has-background-success"
+        } else {
+            ""
+        };
         let on_click = link.callback(|_| Msg::Clicked);
         return html! {
             <div class="card" onclick={ on_click }>

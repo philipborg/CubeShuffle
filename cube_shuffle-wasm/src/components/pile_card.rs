@@ -10,18 +10,17 @@ pub struct Props {
 }
 
 pub enum Msg {
-    Delete
+    Delete,
 }
 
-pub struct PileCard {
-}
+pub struct PileCard {}
 
 impl Component for PileCard {
     type Message = Msg;
     type Properties = Props;
 
     fn create(_: &Context<Self>) -> Self {
-        Self{}
+        Self {}
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {

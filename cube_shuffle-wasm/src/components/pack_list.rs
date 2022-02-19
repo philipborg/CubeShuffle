@@ -28,13 +28,14 @@ impl Component for PackList {
     type Properties = Props;
 
     fn create(ctx: &Context<Self>) -> Self {
-        Self{
-            packs: ctx.props().packs.iter()
-                .map(|pack|{
-                    PackItem{
-                        pack: pack.to_owned(),
-                        checked: false,
-                    }
+        Self {
+            packs: ctx
+                .props()
+                .packs
+                .iter()
+                .map(|pack| PackItem {
+                    pack: pack.to_owned(),
+                    checked: false,
                 })
                 .collect(),
         }
@@ -50,11 +51,13 @@ impl Component for PackList {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let packs: Html = self.packs.iter()
+        let packs: Html = self
+            .packs
+            .iter()
             .enumerate()
             .sorted_by_key(|(_, pi)| pi.checked)
             .map(|(index, pack_item)| {
-                let on_click = ctx.link().callback(|index| {Msg::Check(index)});
+                let on_click = ctx.link().callback(Msg::Check);
                 html! {
                     <div class="column is-narrow">
                         <PackCard

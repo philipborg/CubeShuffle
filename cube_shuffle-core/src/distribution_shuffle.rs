@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 use parse_display::{Display, FromStr};
-use rand::{Rng, RngCore};
 use rand::prelude::SliceRandom;
+use rand::{Rng, RngCore};
 use serde::{Deserialize, Serialize};
 
 use crate::distribution_shuffle::ShufflingErrors::{EmptyPacks, UndividablePacks};
@@ -18,7 +18,10 @@ pub struct Pile {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct Pack<P> where P: Hash + Eq + Serialize {
+pub struct Pack<P>
+where
+    P: Hash + Eq + Serialize,
+{
     pub card_sources: HashMap<P, u32>,
 }
 
@@ -35,9 +38,10 @@ pub enum ShufflingErrors {
 pub fn shuffle<'a, P>(
     piles: &'a HashMap<P, Pile>,
     pack_size: u32,
-    random: &mut impl RngCore)
-    -> Result<Vec<Pack<&'a P>>, ShufflingErrors>
-    where P: Eq + Hash + Serialize
+    random: &mut impl RngCore,
+) -> Result<Vec<Pack<&'a P>>, ShufflingErrors>
+where
+    P: Eq + Hash + Serialize,
 {
     if pack_size == 0 {
         return Err(EmptyPacks);
@@ -46,13 +50,21 @@ pub fn shuffle<'a, P>(
     let pack_count: u32 = card_count / pack_size;
 
     if pack_count == 0 {
-        return Err(UndividablePacks { overflow: pack_size, pack_size, card_count });
+        return Err(UndividablePacks {
+            overflow: pack_size,
+            pack_size,
+            card_count,
+        });
     }
 
     let pack_overflow: u32 = card_count % pack_size;
 
     if pack_overflow != 0 {
-        return Err(UndividablePacks { pack_size, card_count, overflow: pack_overflow });
+        return Err(UndividablePacks {
+            pack_size,
+            card_count,
+            overflow: pack_overflow,
+        });
     }
 
     let mut packs: Vec<HashMap<Option<&P>, u32>> = Vec::new();
@@ -79,23 +91,22 @@ pub fn shuffle<'a, P>(
     }
 
     randomized.shuffle(random);
-    let finalized_packs: Vec<Pack<&P>> = packs.iter().map(|incomplete_pack| {
-        let mut card_sources: HashMap<&P, u32> =
-            incomplete_pack.iter()
+    let finalized_packs: Vec<Pack<&P>> = packs
+        .iter()
+        .map(|incomplete_pack| {
+            let mut card_sources: HashMap<&P, u32> = incomplete_pack
+                .iter()
                 .filter_map(|(source, amount)| (*source).map(|s| (s, *amount)))
                 .collect();
 
-        let randomized_picks = incomplete_pack.get(&None).unwrap_or(&0);
-        for _ in 0..*randomized_picks {
-            let card_source = randomized.pop().unwrap();
-            *card_sources
-                .entry(card_source)
-                .or_insert(0) += 1;
-        }
-        Pack {
-            card_sources
-        }
-    }).collect();
+            let randomized_picks = incomplete_pack.get(&None).unwrap_or(&0);
+            for _ in 0..*randomized_picks {
+                let card_source = randomized.pop().unwrap();
+                *card_sources.entry(card_source).or_insert(0) += 1;
+            }
+            Pack { card_sources }
+        })
+        .collect();
 
     Ok(finalized_packs)
 }
@@ -111,7 +122,7 @@ mod tests {
     use rand::rngs::StdRng;
     use rand::SeedableRng;
 
-    use crate::distribution_shuffle::{Odds, Pile, shuffle};
+    use crate::distribution_shuffle::{shuffle, Odds, Pile};
 
     prop_compose! {
         fn arb_odds()(odds in 0f64..=1f64) -> Odds{
@@ -141,7 +152,7 @@ mod tests {
     }
 
     fn get_valid_pack_sizes(cards: u32) -> Vec<u32> {
-        (1..=cards).filter(move |d| { cards % d == 0 }).collect()
+        (1..=cards).filter(move |d| cards % d == 0).collect()
     }
 
     proptest! {

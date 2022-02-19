@@ -1,22 +1,19 @@
 use std::collections::HashMap;
 
-use rand::{RngCore, SeedableRng};
 use rand::prelude::StdRng;
+use rand::{RngCore, SeedableRng};
 use yew::prelude::*;
 
 use cube_shuffle_core::distribution_shuffle::{Pack, Pile, ShufflingErrors};
 
+use crate::components::add_pile::AddPile;
 use crate::components::integer_input::IntegerInput;
 use crate::components::pack_list::PackList;
 use crate::components::pile_list::PileList;
-use crate::components::add_pile::AddPile;
 
 #[derive(Clone, PartialEq)]
 pub enum Msg {
-    AddPile {
-        name: String,
-        pile: Pile,
-    },
+    AddPile { name: String, pile: Pile },
     DelPile(String),
     UpdateSeed(Option<i128>),
     UpdatePackSize(Option<i128>),
@@ -28,9 +25,7 @@ pub enum Msg {
 #[derive(Clone, PartialEq)]
 pub enum State {
     Piling,
-    Shuffled {
-        packs: Vec<Pack<String>>
-    },
+    Shuffled { packs: Vec<Pack<String>> },
 }
 
 #[derive(Clone, PartialEq)]
@@ -44,27 +39,34 @@ pub struct App {
 
 fn distribute_shuffle(app: &App) -> Result<Vec<Pack<String>>, String> {
     let mut rng = StdRng::seed_from_u64(app.seed);
-    let packs = match cube_shuffle_core::distribution_shuffle::shuffle(&app.piles, app.pack_size, &mut rng) {
-        Ok(p) => { p }
-        Err(e) => {
-            return match e {
-                ShufflingErrors::EmptyPacks => {
-                    Err(String::from("Empty pack."))
-                }
-                ShufflingErrors::UndividablePacks { pack_size, card_count, overflow } => {
-                    Err(format!("{} isn't dividable by {}, it overflows by {}.", card_count, pack_size, overflow))
-                }
-            };
-        }
-    };
-    let owned_packs: Vec<Pack<String>> = packs.into_iter().map(|pack| {
-        Pack {
-            card_sources: pack.card_sources
+    let packs =
+        match cube_shuffle_core::distribution_shuffle::shuffle(&app.piles, app.pack_size, &mut rng)
+        {
+            Ok(p) => p,
+            Err(e) => {
+                return match e {
+                    ShufflingErrors::EmptyPacks => Err(String::from("Empty pack.")),
+                    ShufflingErrors::UndividablePacks {
+                        pack_size,
+                        card_count,
+                        overflow,
+                    } => Err(format!(
+                        "{} isn't dividable by {}, it overflows by {}.",
+                        card_count, pack_size, overflow
+                    )),
+                };
+            }
+        };
+    let owned_packs: Vec<Pack<String>> = packs
+        .into_iter()
+        .map(|pack| Pack {
+            card_sources: pack
+                .card_sources
                 .into_iter()
-                .map(|(k, v)| { (k.clone(), v) })
-                .collect()
-        }
-    }).collect();
+                .map(|(k, v)| (k.clone(), v))
+                .collect(),
+        })
+        .collect();
     Ok(owned_packs)
 }
 
@@ -92,8 +94,8 @@ impl Component for App {
             }
             Msg::UpdateSeed(seed) => {
                 self.seed = seed
-                    .and_then(|s| { u64::try_from(s).ok() })
-                    .unwrap_or_else(|| { StdRng::from_entropy().next_u64() });
+                    .and_then(|s| u64::try_from(s).ok())
+                    .unwrap_or_else(|| StdRng::from_entropy().next_u64());
                 true
             }
             Msg::UpdatePackSize(pack_size) => {
@@ -108,14 +110,8 @@ impl Component for App {
             }
             Msg::Shuffle => {
                 match distribute_shuffle(self) {
-                    Ok(packs) => {
-                        self.state = State::Shuffled {
-                            packs
-                        }
-                    }
-                    Err(e) => {
-                        self.error_message = Some(e)
-                    }
+                    Ok(packs) => self.state = State::Shuffled { packs },
+                    Err(e) => self.error_message = Some(e),
                 }
                 true
             }
@@ -183,7 +179,7 @@ impl Component for App {
                 }
             }
             State::Shuffled { packs } => {
-                let re_pile = link.callback(|_| { Msg::Pile });
+                let re_pile = link.callback(|_| Msg::Pile);
                 html! {
                     <>
                         <button class="button is-danger" onclick={ re_pile }>{ "Re-pile" }</button>
@@ -193,17 +189,15 @@ impl Component for App {
             }
         };
 
-        let clear_error = link.callback(|_| { Msg::Error(None) });
-        let error_html: Html = self.error_message
-            .clone()
-            .map_or(html! {}, |e| {
-                return html! {
+        let clear_error = link.callback(|_| Msg::Error(None));
+        let error_html: Html = self.error_message.clone().map_or(html! {}, |e| {
+            return html! {
                 <div class="notification is-danger">
                     <button onclick={ clear_error } class="delete"></button>
                     <p>{ e }</p>
                 </div>
             };
-            });
+        });
 
         return html! {
             <>
