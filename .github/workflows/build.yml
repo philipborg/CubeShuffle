@@ -89,6 +89,8 @@ jobs:
       - name: Exfiltrate MSI
         if: runner.os == 'Windows'
         run: Move-Item -Path "${{ env.SOURCE_PATH }}/target/release/bundle/msi/cube-shuffle*.msi.tar.gz" -Destination "./CubeShuffle-GUI.msi.tar.gz"
+      - name: List files DEBUG
+        run: ls -R
       - uses: actions/upload-artifact@v2
         name: Tauri Windows Installer
         if: runner.os == 'Windows'
