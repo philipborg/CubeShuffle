@@ -67,7 +67,7 @@ jobs:
           path: "${{ env.SOURCE_PATH }}/target/release/cube-shuffle"
       - name: Exfiltrate deb
         if: runner.os == 'Linux'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/deb/cube-shuffle*.deb" "CubeShuffle-GUI.deb"
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/deb/cube-shuffle"*".deb" "CubeShuffle-GUI.deb"
       - uses: actions/upload-artifact@v2
         name: Tauri Linux deb
         if: runner.os == 'Linux'
@@ -77,7 +77,7 @@ jobs:
           path: "CubeShuffle-GUI.deb"
       - name: Exfiltrate AppImage
         if: runner.os == 'Linux'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle*.AppImage.tar.gz" "CubeShuffle-GUI.AppImage.tar.gz"
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle"*".AppImage.tar.gz" "CubeShuffle-GUI.AppImage.tar.gz"
       - uses: actions/upload-artifact@v2
         name: Tauri Linux AppImage
         if: runner.os == 'Linux'
@@ -99,7 +99,7 @@ jobs:
 
       - name: Exfiltrate macOS app
         if: runner.os == 'macOS'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/macos/cube-shuffle*.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/macos/cube-shuffle"*".app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
       - uses: actions/upload-artifact@v2
         name: Tauri macOS app
         if: runner.os == 'macOS'
@@ -109,7 +109,7 @@ jobs:
           path: "CubeShuffle-GUI.app.tar.gz"
       - name: Exfiltrate macOS app
         if: runner.os == 'macOS'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/cube-shuffle*.dmg" "CubeShuffle-GUI.dmg"
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/cube-shuffle"*".dmg" "CubeShuffle-GUI.dmg"
       - uses: actions/upload-artifact@v2
         name: Tauri macOS dmg
         if: runner.os == 'macOS'
