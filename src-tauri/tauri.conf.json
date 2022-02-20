@@ -47,7 +47,12 @@
       }
     },
     "updater": {
-      "active": false
+      "active": true,
+      "dialog": true,
+      "pubkey": "",
+      "endpoints": [
+        "https://github.com/philipborg/CubeShuffle/releases/latest/download/update_info.json"
+      ]
     },
     "allowlist": {
       "all": false
