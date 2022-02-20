@@ -278,12 +278,12 @@ jobs:
           cordova platform add android --no-telemetry --verbose
           cordova build android --device --release --no-telemetry --verbose
       - name: Extract build output
-        run: mv "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/platforms/android/app/build/outputs/bundle/release/app-release.aab" "./CubeShuffle.aab"
+        run: mv "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/platforms/android/app/build/outputs/bundle/release/app-release.aab" "./CubeShuffle_Android.aab"
       - uses: actions/upload-artifact@v2
         with:
           name: CubeShuffle-Cordova-Android
           if-no-files-found: error
-          path: "./CubeShuffle.aab"
+          path: "./CubeShuffle_Android.aab"
 
   publish:
     needs: [ cordova-build, cli-build, rust-build ]
@@ -331,10 +331,10 @@ jobs:
           prerelease: true
           files: |
             CubeShuffle-Cordova-Android/CubeShuffle_Android.aab
-            CubeShuffle-Tauri_Linux_X64.AppImage/cube-shuffle_GUI.AppImage.tar.gz
-            CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle_GUI.deb
-            CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle_GUI.msi.zip
-            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle_GUI.dmg
-            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle_GUI.app.tar.gz
+            CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage.tar.gz
+            CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle-GUI.deb
+            CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi.zip
+            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle-GUI.dmg
+            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle-GUI.app.tar.gz
             CubeShuffle-cli_*/*
             update_info.json
