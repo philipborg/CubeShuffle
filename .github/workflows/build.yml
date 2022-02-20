@@ -294,7 +294,9 @@ jobs:
       - name: List artifacts
         run: ls -R
       - name: Install jq
-        run: apt-get -y update && apt-get -y install jq
+        run: |
+          sudo apt-get -y update \
+          && sudo apt-get -y install jq
       - name: Make update json
         run: |
           jq -n \
