@@ -107,16 +107,16 @@ jobs:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.app
           path: "CubeShuffle-GUI.app.tar.gz"
-      - name: Exfiltrate macOS app
+      - name: Exfiltrate macOS dmg
         if: runner.os == 'macOS'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/cube-shuffle"*".dmg" "CubeShuffle-GUI.dmg"
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/CubeShuffle"*".dmg" "./CubeShuffle-GUI.dmg"
       - uses: actions/upload-artifact@v2
         name: Tauri macOS dmg
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.dmg
-          path: "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/CubeShuffle*.dmg"
+          path: "./CubeShuffle-GUI.dmg"
 
       - name: Cargo build
         run: cargo build --verbose --locked --release
