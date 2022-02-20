@@ -55,7 +55,7 @@ jobs:
         if: runner.os == 'Windows'
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
       - name: Tauri Build
-        run: cargo tauri build
+        run: cargo tauri build 2>&1
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
 
       - uses: actions/upload-artifact@v2
