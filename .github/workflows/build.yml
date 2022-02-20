@@ -335,6 +335,6 @@ jobs:
             CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle-GUI.deb
             CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi.zip
             CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle-GUI.dmg
-            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle-GUI.app.tar.gz
+            CubeShuffle-Tauri_macOS_X64.app/CubeShuffle-GUI.app.tar.gz
             CubeShuffle-cli_*/*
             update_info.json
