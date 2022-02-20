@@ -55,7 +55,7 @@ jobs:
         if: runner.os == 'Windows'
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
       - name: Tauri Build
-        run: cargo tauri build
+        run: cargo tauri build || true
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
 
       - uses: actions/upload-artifact@v2
@@ -65,43 +65,60 @@ jobs:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}_EXECUTABLE
           path: "${{ env.SOURCE_PATH }}/target/release/cube-shuffle"
+      - name: Exfiltrate deb
+        if: runner.os == 'Linux'
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/deb/cube-shuffle"*".deb" "CubeShuffle-GUI.deb"
       - uses: actions/upload-artifact@v2
         name: Tauri Linux deb
         if: runner.os == 'Linux'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.deb
-          path: "${{ env.SOURCE_PATH }}/target/release/bundle/deb/cube-shuffle*.deb"
+          path: "CubeShuffle-GUI.deb"
+      - name: Exfiltrate AppImage
+        if: runner.os == 'Linux'
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle"*".AppImage.tar.gz" "CubeShuffle-GUI.AppImage.tar.gz"
       - uses: actions/upload-artifact@v2
         name: Tauri Linux AppImage
         if: runner.os == 'Linux'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.AppImage
-          path: "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle*.AppImage"
+          path: "CubeShuffle-GUI.AppImage.tar.gz"
 
+      - name: Exfiltrate MSI
+        if: runner.os == 'Windows'
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi.zip"
+      - name: List files DEBUG
+        run: ls -R
       - uses: actions/upload-artifact@v2
         name: Tauri Windows Installer
         if: runner.os == 'Windows'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.msi
-          path: "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi"
+          path: "./CubeShuffle-GUI.msi.zip"
 
+      - name: Exfiltrate macOS app
+        if: runner.os == 'macOS'
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/macos/CubeShuffle.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
       - uses: actions/upload-artifact@v2
         name: Tauri macOS app
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.app
-          path: "${{ env.SOURCE_PATH }}/target/release/bundle/macos/CubeShuffle*.app"
+          path: "CubeShuffle-GUI.app.tar.gz"
+      - name: Exfiltrate macOS dmg
+        if: runner.os == 'macOS'
+        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/CubeShuffle"*".dmg" "./CubeShuffle-GUI.dmg"
       - uses: actions/upload-artifact@v2
         name: Tauri macOS dmg
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.dmg
-          path: "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/CubeShuffle*.dmg"
+          path: "./CubeShuffle-GUI.dmg"
 
       - name: Cargo build
         run: cargo build --verbose --locked --release
@@ -276,6 +293,33 @@ jobs:
       - uses: actions/download-artifact@v2
       - name: List artifacts
         run: ls -R
+      - name: Install jq
+        run: apt-get -y update && apt-get -y install jq
+      - name: Make update json
+        run: |
+          jq -n \
+          --arg version = "${GITHUB_REF##*/}" \
+          --arg now = `date --iso-8601=ns`
+          '{
+            "name": "$version",
+            "notes": "All releases at https://github.com/philipborg/CubeShuffle/releases",
+            "pub_date": "$now",
+            "platforms": {
+              "darwin": {
+                "signature":"",
+                "url": "https://github.com/philipborg/CubeShuffle/releases/download/$version/CubeShuffle-GUI.app.tar.gz"
+              },
+              "linux": {
+                "signature":"",
+                "url": "https://github.com/philipborg/CubeShuffle/releases/download/$version/CubeShuffle-GUI.AppImage.tar.gz"
+              },
+              "win64": {
+                "signature":"",
+                "url": "https://github.com/philipborg/CubeShuffle/releases/download/$version/CubeShuffle-GUI.msi.zip"
+              }
+            }
+          }' \
+          > "update_info.json"
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -284,9 +328,11 @@ jobs:
           fail_on_unmatched_files: true
           prerelease: true
           files: |
-            CubeShuffle-Cordova-Android/CubeShuffle.aab
-            CubeShuffle-Tauri_Linux_X64.AppImage/cube-shuffle_*.AppImage
-            CubeShuffle-Tauri_Linux_X64.deb/cube-shuffle_*.deb
-            CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle_*.msi
-            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle_*.dmg
+            CubeShuffle-Cordova-Android/CubeShuffle_Android.aab
+            CubeShuffle-Tauri_Linux_X64.AppImage/cube-shuffle_GUI.AppImage.tar.gz
+            CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle_GUI.deb
+            CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle_GUI.msi.zip
+            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle_GUI.dmg
+            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle_GUI.app.tar.gz
             CubeShuffle-cli_*/*
+            update_info.json
