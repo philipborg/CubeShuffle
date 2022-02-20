@@ -301,7 +301,7 @@ jobs:
         run: |
           jq -n \
           --arg version = "${GITHUB_REF##*/}" \
-          --arg now = `date --iso-8601=ns`
+          --arg now = `date --iso-8601=ns` \
           '{
             "name": "$version",
             "notes": "All releases at https://github.com/philipborg/CubeShuffle/releases",
