@@ -5,9 +5,6 @@ on:
     branches: [ 'master', 'develop' ]
   pull_request:
     branches: [ 'master', 'develop' ]
-  create:
-    tags:
-      - v**
   workflow_dispatch:
 
 env:
