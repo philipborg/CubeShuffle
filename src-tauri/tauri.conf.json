@@ -55,7 +55,10 @@
       ]
     },
     "allowlist": {
-      "all": false
+      "all": false,
+      "shell": {
+        "open": "^https://github.com/philipborg"
+      }
     },
     "windows": [
       {
