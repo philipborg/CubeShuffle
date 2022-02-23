@@ -6,5 +6,5 @@
         CubeShuffle is developed by philipborg
     </author>
     <content src="index.html" />
-    <access origin="https://github.com/philipborg" />
+    <allow-intent href="https://github.com/philipborg/*" />
 </widget>
