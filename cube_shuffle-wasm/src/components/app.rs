@@ -1,7 +1,10 @@
 use std::collections::HashMap;
+use std::io::Cursor;
 
+use byteorder::{BigEndian, ReadBytesExt};
 use rand::prelude::StdRng;
 use rand::{RngCore, SeedableRng};
+use sha3::{Digest, Sha3_256};
 use yew::prelude::*;
 
 use cube_shuffle_core::distribution_shuffle::{Pack, Pile, ShufflingErrors};
@@ -10,12 +13,13 @@ use crate::components::add_pile::AddPile;
 use crate::components::integer_input::IntegerInput;
 use crate::components::pack_list::PackList;
 use crate::components::pile_list::PileList;
+use crate::components::text_input::TextInput;
 
 #[derive(Clone, PartialEq)]
 pub enum Msg {
     AddPile { name: String, pile: Pile },
     DelPile(String),
-    UpdateSeed(Option<i128>),
+    UpdateSeed(String),
     UpdatePackSize(Option<i128>),
     Pile,
     Shuffle,
@@ -32,13 +36,27 @@ pub enum State {
 pub struct App {
     piles: HashMap<String, Pile>,
     state: State,
-    seed: u64,
+    seed: String,
     error_message: Option<String>,
     pack_size: u32,
 }
 
+fn get_seed(seed: &str) -> u64 {
+    match seed.parse::<u64>() {
+        Ok(s) => s,
+        Err(_) => {
+            let mut hasher = Sha3_256::new();
+            hasher.update(seed.as_bytes());
+            let full_hash = hasher.finalize();
+            let mut rdr = Cursor::new(full_hash);
+            rdr.read_u64::<BigEndian>().unwrap()
+        }
+    }
+}
+
 fn distribute_shuffle(app: &App) -> Result<Vec<Pack<String>>, String> {
-    let mut rng = StdRng::seed_from_u64(app.seed);
+    let seed = get_seed(&app.seed);
+    let mut rng = StdRng::seed_from_u64(seed);
     let packs =
         match cube_shuffle_core::distribution_shuffle::shuffle(&app.piles, app.pack_size, &mut rng)
         {
@@ -79,7 +97,7 @@ impl Component for App {
         Self {
             piles: HashMap::new(),
             state: State::Piling,
-            seed: rng.next_u64(),
+            seed: rng.next_u64().to_string(),
             error_message: None,
             pack_size: 15,
         }
@@ -93,9 +111,7 @@ impl Component for App {
                 true
             }
             Msg::UpdateSeed(seed) => {
-                self.seed = seed
-                    .and_then(|s| u64::try_from(s).ok())
-                    .unwrap_or_else(|| StdRng::from_entropy().next_u64());
+                self.seed = seed;
                 true
             }
             Msg::UpdatePackSize(pack_size) => {
@@ -143,12 +159,10 @@ impl Component for App {
                                 <div class="field">
                                     <label class="label">{ "Seed" }</label>
                                     <div class="control">
-                                        <IntegerInput
-                                            value={ i128::from(self.seed) }
+                                        <TextInput
+                                            value={ self.seed.clone() }
                                             on_change={ update_seed }
                                             placeholder="Randomness seed"
-                                            min={ i128::from(u64::MIN) }
-                                            max={ i128::from(u64::MAX) }
                                         />
                                     </div>
                                 </div>
@@ -217,5 +231,30 @@ impl Component for App {
                 { content }
             </>
         };
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::app::get_seed;
+    use itertools::Itertools;
+    use proptest::proptest;
+
+    proptest! {
+        #[test]
+        fn get_seed_u64(seed:u64){
+            assert_eq!(seed, get_seed(&seed.to_string()));
+        }
+
+        #[test]
+        fn get_seed_str(seed:String) {
+            get_seed(&seed);
+        }
+    }
+
+    #[test]
+    fn get_seed_unique() {
+        let unique = ('A'..'z').map(|c| get_seed(&c.to_string())).all_unique();
+        assert!(unique);
     }
 }
