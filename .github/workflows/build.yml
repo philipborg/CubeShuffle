@@ -18,6 +18,8 @@ jobs:
       matrix:
         platform: [ macos-latest, ubuntu-latest, windows-2022 ]
     runs-on: ${{ matrix.platform }}
+    env:
+      TAURI_CONFIG: "${{ startsWith(github.ref, 'refs/tags/v') && '{\"package\":{\"version\": \"v0.1.1\"}}' || '{}' }}"
     steps:
       - uses: actions/checkout@v2
         with:
@@ -55,7 +57,9 @@ jobs:
         if: runner.os == 'Windows'
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
       - name: Tauri Build
-        run: cargo tauri build || true
+        run: |
+          cargo tauri build -c "${{ env.TAURI_CONFIG }}" \
+          || true
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
 
       - uses: actions/upload-artifact@v2
@@ -301,21 +305,21 @@ jobs:
           --arg version "${GITHUB_REF##*/}" \
           --arg now `date --iso-8601=ns` \
           '{
-            "name": "$version",
+            "name": "[$version]",
             "notes": "All releases at https://github.com/philipborg/CubeShuffle/releases",
-            "pub_date": "$now",
+            "pub_date": "[$now]",
             "platforms": {
               "darwin": {
                 "signature":"",
-                "url": "https://github.com/philipborg/CubeShuffle/releases/download/$version/CubeShuffle-GUI.app.tar.gz"
+                "url": "https://github.com/philipborg/CubeShuffle/releases/download/[$version]/CubeShuffle-GUI.app.tar.gz"
               },
               "linux": {
                 "signature":"",
-                "url": "https://github.com/philipborg/CubeShuffle/releases/download/$version/CubeShuffle-GUI.AppImage.tar.gz"
+                "url": "https://github.com/philipborg/CubeShuffle/releases/download/[$version]/CubeShuffle-GUI.AppImage.tar.gz"
               },
               "win64": {
                 "signature":"",
-                "url": "https://github.com/philipborg/CubeShuffle/releases/download/$version/CubeShuffle-GUI.msi.zip"
+                "url": "https://github.com/philipborg/CubeShuffle/releases/download/[$version]/CubeShuffle-GUI.msi.zip"
               }
             }
           }' \
