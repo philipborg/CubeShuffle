@@ -298,24 +298,24 @@ jobs:
       - name: Make update json
         run: |
           jq -n \
-          --arg version "${GITHUB_REF##*/}" \
+          --arg version "${GITHUB_REF##*/v}" \
           --arg now `date --iso-8601=ns` \
           '{
-            "name": "$version",
+            "name": "[$version]",
             "notes": "All releases at https://github.com/philipborg/CubeShuffle/releases",
-            "pub_date": "$now",
+            "pub_date": "[$now]",
             "platforms": {
               "darwin": {
                 "signature":"",
-                "url": "https://github.com/philipborg/CubeShuffle/releases/download/$version/CubeShuffle-GUI.app.tar.gz"
+                "url": "https://github.com/philipborg/CubeShuffle/releases/download/[$version]/CubeShuffle-GUI.app.tar.gz"
               },
               "linux": {
                 "signature":"",
-                "url": "https://github.com/philipborg/CubeShuffle/releases/download/$version/CubeShuffle-GUI.AppImage.tar.gz"
+                "url": "https://github.com/philipborg/CubeShuffle/releases/download/[$version]/CubeShuffle-GUI.AppImage.tar.gz"
               },
               "win64": {
                 "signature":"",
-                "url": "https://github.com/philipborg/CubeShuffle/releases/download/$version/CubeShuffle-GUI.msi.zip"
+                "url": "https://github.com/philipborg/CubeShuffle/releases/download/[$version]/CubeShuffle-GUI.msi.zip"
               }
             }
           }' \
