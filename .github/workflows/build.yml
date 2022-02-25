@@ -55,7 +55,9 @@ jobs:
         if: runner.os == 'Windows'
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
       - name: Tauri Build
-        run: cargo tauri build || true
+        run: |
+          cargo tauri build -c "{\"tauri\": {\"updater\": {\"pubkey\": \"${{ secrets.TAURI_PRIVATE_KEY && 'dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM4OTE4REIzOENCMTJCRjYKUldUMks3R01zNDJST0ovb0oreXQ4R1ZJK2lNYmxuZjlXbXNEY1libVdYYjZoeEp1L2FESEJ5SjEK' || '' }}\"}}}" \
+          || ${{ secrets.TAURI_PRIVATE_KEY && 'false' || 'true}}
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
         env:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}

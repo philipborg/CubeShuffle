@@ -49,7 +49,7 @@
     "updater": {
       "active": true,
       "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM4OTE4REIzOENCMTJCRjYKUldUMks3R01zNDJST0ovb0oreXQ4R1ZJK2lNYmxuZjlXbXNEY1libVdYYjZoeEp1L2FESEJ5SjEK",
+      "pubkey": "",
       "endpoints": [
         "https://github.com/philipborg/CubeShuffle/releases/latest/download/update_info.json"
       ]
