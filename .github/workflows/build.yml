@@ -57,6 +57,8 @@ jobs:
       - name: Tauri Build
         run: cargo tauri build || true
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
+        env:
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
 
       - uses: actions/upload-artifact@v2
         name: Tauri Linux executable
