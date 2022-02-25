@@ -5,6 +5,7 @@
     <author href="https://github.com/philipborg">
         CubeShuffle is developed by philipborg
     </author>
+    <icon src="res/icon.png" />
     <content src="index.html" />
     <allow-intent href="https://github.com/philipborg" />
     <allow-intent href="https://github.com/philipborg/*" />
