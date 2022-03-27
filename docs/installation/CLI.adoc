@@ -7,7 +7,7 @@
 [#_github_releases]
 == Github Releases
 
-Simply download one of the readily compiled executables from link:https://github.com/philipborg/CubeShuffle/releases[Releases].
+Simply download one of the readily compiled executables from link:https://github.com/philipborg/CubeShuffle/releases[Releases] under `Assets`.
 Make sure you choose the correct one for your platform.
 
 [#_from_source]
