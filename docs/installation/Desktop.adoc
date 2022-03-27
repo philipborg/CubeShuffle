@@ -2,7 +2,7 @@
 
 .Steps
 . Browse to link:https://github.com/philipborg/CubeShuffle/releases[the releases].
-. Download the correct compiled version.
+. Download the correct compiled version from the `Assets` list.
 +
 * Linux
 ** link:https://appimage.org[AppImage] (#recommended#) - Download, extract and run `CubeShuffle-GUI.AppImage.tar.gz`. Optionally choose `Integrate and run` during startup to install persistently.
