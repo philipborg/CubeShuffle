@@ -236,7 +236,7 @@ impl Component for App {
 
 #[cfg(test)]
 mod tests {
-    use crate::app::get_seed;
+    use crate::components::app::get_seed;
     use itertools::Itertools;
     use proptest::proptest;
 
