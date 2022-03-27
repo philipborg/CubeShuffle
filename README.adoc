@@ -16,6 +16,16 @@ image:https://img.shields.io/github/followers/philipborg?style=social[GitHub fol
 CubeShuffle aims to improve your card game cube shuffling by offering more control over the card distribution/randomness and/or increasing shuffling speed by combining digital and manual shuffling.
 It is designed to be generic for all card games with a cube format but I, the developer, primarily play Magic The Gathering (unaffiliated).
 
+== Installation
+
+There are currently three different ways to install CubeShuffle.
+Be aware that there are currently no automatic updates operational on any platform.
+
+.Platforms
+* link:docs/installation/Desktop.adoc[Desktop GUI] (Recommended)
+* link:docs/installation/Android.adoc[Android]
+* link:docs/installation/CLI.adoc[Command Line Interface]
+
 == [#Distribution shuffle]#link:docs/distribution_shuffle.adoc[Distribution shuffle]#
 
 A quick and easy shuffling method for cubes where cards can be assigned to and distributed based upon groups.
