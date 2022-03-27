@@ -1,0 +1,12 @@
+= Android installation
+
+The distribution of the Android build is currently unfinished.
+Publishing to the Google Play Store is link:https://github.com/philipborg/CubeShuffle/issues/67[on the roadmap].
+Only manual link:#_installing_aab[AAB installation] is currently available.
+
+[#_installing_aab]
+== Installing AAB
+The link:https://developer.android.com/guide/app-bundle[Android Application Bundle] is available from compiled link:https://github.com/philipborg/CubeShuffle/releases[releases].
+To install use the link:https://developer.android.com/studio/command-line/bundletool[bundletool] to first generate an `apks` file which then can be installed, also using `bundletool`.
+Installing from `AAB` is moderately advanced and `CubeShuffle` will not handle issues during generation of `apks` files nor their installation, though pull requests expanding this guide are welcome.
+After a successful installation all issues are treated like other installation methods.
