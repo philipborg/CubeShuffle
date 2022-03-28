@@ -26,7 +26,7 @@ You may have as many piles as you wish, but all cards should belong to a pile.
 
 === Shuffle the piles
 
-Shuffle each pile individually without mixing them.
+Physically shuffle each pile individually without mixing them.
 Remember to keep track of which pile is which.
 
 === Register the piles
@@ -64,7 +64,7 @@ It would allow to defining groups for randomness mixing.
 
 === Pack content shuffle
 
-Let CubeShuffle shuffle and prepare your packs! Click the shuffle button for GUI or execute the CLI command. Below are the configurations available.
+Let CubeShuffle shuffle and prepare your packs! Click the `Generate packs` button for GUI or execute the CLI command. Below are the configurations available.
 
 ==== Seed
 
@@ -78,7 +78,7 @@ This is only expected to be the case with the same version of CubeShuffle.
 You will now be presented with a list of packs.
 This is a pack pick order list essentially.
 Each pack lists a number of cards from piles it should include.
-Thus to build each pack you just take as many cards from each pile as described.
+Thus, to build each pack you just take as many cards from each pile as described.
 In the GUI versions of CubeShuffle you can mark packs as picked.
 
 === Pack shuffle
