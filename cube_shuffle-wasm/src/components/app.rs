@@ -150,7 +150,7 @@ impl Component for App {
                 let delete_pile = link.callback(Msg::DelPile);
                 let update_seed = link.callback(Msg::UpdateSeed);
                 let update_pack_size = link.callback(Msg::UpdatePackSize);
-                let on_shuffle = link.callback(|_| Msg::Shuffle);
+                let to_shuffle = link.callback(|_| Msg::Shuffle);
                 let on_error = link.callback(|e| Msg::Error(Some(e)));
                 html! {
                     <>
@@ -180,7 +180,7 @@ impl Component for App {
                                 </div>
                                 <div class="field">
                                     <div class="control">
-                                        <button class="button is-success" onclick={ on_shuffle }>{ "Shuffle" }</button>
+                                        <button class="button is-success" onclick={ to_shuffle }>{ "Generate packs" }</button>
                                     </div>
                                 </div>
                             </div>
@@ -193,10 +193,10 @@ impl Component for App {
                 }
             }
             State::Shuffled { packs } => {
-                let re_pile = link.callback(|_| Msg::Pile);
+                let to_pile = link.callback(|_| Msg::Pile);
                 html! {
                     <>
-                        <button class="button is-danger" onclick={ re_pile }>{ "Re-pile" }</button>
+                        <button class="button is-danger" onclick={ to_pile }>{ "Back" }</button>
                         <PackList packs={ packs.clone() }/>
                     </>
                 }
