@@ -294,7 +294,11 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get -y update
-          apt-get -y install wget unzip
+          apt-get -y install wget unzip git
+      - uses: actions/checkout@v3
+        with:
+          submodules: false
+          path: ${{ env.SOURCE_PATH }}
       - name: Download bundletool
         run: wget -O bundletool.jar https://github.com/google/bundletool/releases/download/1.9.0/bundletool-all-1.9.0.jar
       - name: Download AAB
@@ -302,14 +306,23 @@ jobs:
         with:
           name: CubeShuffle-Cordova-Android-Bundle
       - name: Build APKS
-        run: java -jar "./bundletool.jar" build-apks --mode=universal --bundle="./CubeShuffle_Android.aab" --output="./CubeShuffle_Android.apks"
+        run: |
+          java -jar "./bundletool.jar" build-apks \
+          --mode=universal \
+          --ks="${{ env.SOURCE_PATH }}/cubeshuffle.keystore" \
+          --ks-pass=pass:${{ secrets.KEYSTORE_PASSWORD }} \
+          --ks-key-alias=cubeshuffle \
+          --bundle="./CubeShuffle_Android.aab" \
+          --output="./CubeShuffle_Android.apks"
       - name: Extract APK
         run: unzip -p "./CubeShuffle_Android.apks" "universal.apk" > "./CubeShuffle_Android.apk"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: CubeShuffle-Cordova-Android-Universal
           if-no-files-found: error
-          path: "./CubeShuffle_Android.apk"
+          path: |
+            ./CubeShuffle_Android.apk
+            ./CubeShuffle_Android.apks
 
   publish:
     needs: [ cordova-build, cli-build, rust-build, apk-generate ]
@@ -359,6 +372,7 @@ jobs:
           files: |
             CubeShuffle-Cordova-Android-Bundle/CubeShuffle_Android.aab
             CubeShuffle-Cordova-Android-Universal/CubeShuffle_Android.apk
+            CubeShuffle-Cordova-Android-Universal/CubeShuffle_Android.apks
             CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage.tar.gz
             CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle-GUI.deb
             CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi.zip
