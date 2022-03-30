@@ -235,9 +235,9 @@ jobs:
           command: build
           args: --release --locked --bin cube_shuffle-cli --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
       - name: Rename executable
-        run: |
-          mv \
-          "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli${{runner.os == 'Windows' && '.exe' || ''}}" \
+        run: >
+          mv
+          "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli${{runner.os == 'Windows' && '.exe' || ''}}"
           "cube_shuffle-cli_${{ matrix.target }}${{runner.os == 'Windows' && '.exe' || ''}}"
       - uses: actions/upload-artifact@v3
         name: Upload executable
