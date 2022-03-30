@@ -19,7 +19,7 @@ jobs:
         platform: [ macos-latest, ubuntu-latest, windows-2022 ]
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
           path: ${{ env.SOURCE_PATH }}
@@ -59,7 +59,7 @@ jobs:
         run: cargo tauri build || true
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         name: Tauri Linux executable
         if: runner.os == 'Linux'
         with:
@@ -69,7 +69,7 @@ jobs:
       - name: Exfiltrate deb
         if: runner.os == 'Linux'
         run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/deb/cube-shuffle"*".deb" "CubeShuffle-GUI.deb"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         name: Tauri Linux deb
         if: runner.os == 'Linux'
         with:
@@ -79,7 +79,7 @@ jobs:
       - name: Exfiltrate AppImage
         if: runner.os == 'Linux'
         run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle"*".AppImage.tar.gz" "CubeShuffle-GUI.AppImage.tar.gz"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         name: Tauri Linux AppImage
         if: runner.os == 'Linux'
         with:
@@ -90,7 +90,7 @@ jobs:
       - name: Exfiltrate MSI
         if: runner.os == 'Windows'
         run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi.zip"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         name: Tauri Windows Installer
         if: runner.os == 'Windows'
         with:
@@ -101,7 +101,7 @@ jobs:
       - name: Exfiltrate macOS app
         if: runner.os == 'macOS'
         run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/macos/CubeShuffle.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         name: Tauri macOS app
         if: runner.os == 'macOS'
         with:
@@ -111,7 +111,7 @@ jobs:
       - name: Exfiltrate macOS dmg
         if: runner.os == 'macOS'
         run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/CubeShuffle"*".dmg" "./CubeShuffle-GUI.dmg"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         name: Tauri macOS dmg
         if: runner.os == 'macOS'
         with:
@@ -129,7 +129,7 @@ jobs:
       - name: Trunk build
         run: trunk build --release --dist "${{ github.workspace }}/wasm_build"
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: CubeShuffle-wasm_${{ matrix.platform }}
           if-no-files-found: error
@@ -216,7 +216,7 @@ jobs:
             cross: true
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
       - uses: actions-rs/toolchain@v1
@@ -234,26 +234,17 @@ jobs:
           use-cross: ${{ matrix.cross }}
           command: build
           args: --release --locked --bin cube_shuffle-cli --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
-      - name: Rename
-        if: runner.os != 'Windows'
-        run: mv "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli" "cube_shuffle-cli_${{ matrix.target }}"
-      - uses: actions/upload-artifact@v2
-        name: Upload binary
-        if: runner.os != 'Windows'
+      - name: Rename executable
+        run: >
+          mv
+          "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli${{runner.os == 'Windows' && '.exe' || ''}}"
+          "cube_shuffle-cli_${{ matrix.target }}${{runner.os == 'Windows' && '.exe' || ''}}"
+      - uses: actions/upload-artifact@v3
+        name: Upload executable
         with:
           name: CubeShuffle-cli_${{ matrix.target }}
           if-no-files-found: error
-          path: "cube_shuffle-cli_${{ matrix.target }}"
-      - name: Rename Windows
-        if: runner.os == 'Windows'
-        run: mv "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli.exe" "cube_shuffle-cli_${{ matrix.target }}.exe"
-      - uses: actions/upload-artifact@v2
-        name: Upload Windows binary
-        if: runner.os == 'Windows'
-        with:
-          name: CubeShuffle-cli_${{ matrix.target }}
-          if-no-files-found: error
-          path: "cube_shuffle-cli_${{ matrix.target }}.exe"
+          path: "cube_shuffle-cli_${{ matrix.target }}${{runner.os == 'Windows' && '.exe' || ''}}"
 
   cordova-build:
     container:
@@ -263,12 +254,12 @@ jobs:
     steps:
       - name: Install Git
         run: apt-get -y update && apt-get -y install git
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
           path: ${{ env.SOURCE_PATH }}
       - name: Download compiled WASM
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: CubeShuffle-wasm_ubuntu-latest
           path: "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/www"
@@ -279,7 +270,7 @@ jobs:
           cordova build android --device --release --no-telemetry --verbose
       - name: Extract build output
         run: mv "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/platforms/android/app/build/outputs/bundle/release/app-release.aab" "./CubeShuffle_Android.aab"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: CubeShuffle-Cordova-Android
           if-no-files-found: error
@@ -290,13 +281,13 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
       - name: List artifacts
         run: ls -R
       - name: Install jq
         run: |
-          sudo apt-get -y update \
-          && sudo apt-get -y install jq
+          sudo apt-get -y update
+          sudo apt-get -y install jq
       - name: Make update json
         run: |
           jq -n \
