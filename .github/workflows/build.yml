@@ -237,23 +237,15 @@ jobs:
       - name: Rename
         if: runner.os != 'Windows'
         run: mv "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli" "cube_shuffle-cli_${{ matrix.target }}"
-      - uses: actions/upload-artifact@v3
-        name: Upload binary
-        if: runner.os != 'Windows'
-        with:
-          name: CubeShuffle-cli_${{ matrix.target }}
-          if-no-files-found: error
-          path: "cube_shuffle-cli_${{ matrix.target }}"
       - name: Rename Windows
         if: runner.os == 'Windows'
         run: mv "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli.exe" "cube_shuffle-cli_${{ matrix.target }}.exe"
       - uses: actions/upload-artifact@v3
-        name: Upload Windows binary
-        if: runner.os == 'Windows'
+        name: Upload binary
         with:
           name: CubeShuffle-cli_${{ matrix.target }}
           if-no-files-found: error
-          path: "cube_shuffle-cli_${{ matrix.target }}.exe"
+          path: "cube_shuffle-cli_${{ matrix.target }}${{runner.os == 'Windows' && '.exe' || ''}}"
 
   cordova-build:
     container:
