@@ -234,14 +234,13 @@ jobs:
           use-cross: ${{ matrix.cross }}
           command: build
           args: --release --locked --bin cube_shuffle-cli --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
-      - name: Rename
-        if: runner.os != 'Windows'
-        run: mv "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli" "cube_shuffle-cli_${{ matrix.target }}"
-      - name: Rename Windows
-        if: runner.os == 'Windows'
-        run: mv "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli.exe" "cube_shuffle-cli_${{ matrix.target }}.exe"
+      - name: Rename executable
+        run: |
+          mv \
+          "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli${{runner.os == 'Windows' && '.exe' || ''}}" \
+          "cube_shuffle-cli_${{ matrix.target }}${{runner.os == 'Windows' && '.exe' || ''}}"
       - uses: actions/upload-artifact@v3
-        name: Upload binary
+        name: Upload executable
         with:
           name: CubeShuffle-cli_${{ matrix.target }}
           if-no-files-found: error
@@ -287,8 +286,8 @@ jobs:
         run: ls -R
       - name: Install jq
         run: |
-          sudo apt-get -y update \
-          && sudo apt-get -y install jq
+          sudo apt-get -y update
+          sudo apt-get -y install jq
       - name: Make update json
         run: |
           jq -n \
