@@ -22,9 +22,9 @@ CubeShuffle is designed to be generic for all card games with a cube format.
 
 CubeShuffle is currently available on three different platforms:
 
-* link:docs/installation/Desktop.adoc[Desktop GUI] (Recommended)
-* link:docs/installation/Android.adoc[Android]
-* link:docs/installation/CLI.adoc[Command Line Interface]
+* link:docs/installation/desktop.adoc[Desktop GUI] (Recommended)
+* link:docs/installation/android.adoc[Android]
+* link:docs/installation/cli.adoc[Command Line Interface]
 
 Please note that there are currently no automatic updates operational on any platform.
 
