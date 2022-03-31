@@ -1,3 +1,6 @@
 [submodule "cube_shuffle-wasm/bulma"]
 	path = cube_shuffle-wasm/bulma
 	url = git@github.com:jgthms/bulma.git
+[submodule "cube_shuffle-wasm/bulma-tooltip"]
+	path = cube_shuffle-wasm/bulma-tooltip
+	url = git@github.com:CreativeBulma/bulma-tooltip.git
