@@ -81,19 +81,35 @@ impl Component for AddPile {
                 <div class="field">
                     <label class="label">{ "Pile name" }</label>
                     <div class="control">
-                        <TextInput on_change={ update_name } value={ self.name.clone() } placeholder={ "Name of the pile" }/>
+                        <TextInput on_change={ update_name } value={ self.name.clone() } placeholder={ "Name of the pile" }
+                            tooltip={
+                                "The name of the pile.\n\
+                                Should be a archetype grouping attribute of the cards, such as \"Green\", \"Blue\", \"Colorless\" and so on.\n"
+                            }
+                        />
                     </div>
                 </div>
                 <div class="field">
                     <label class="label">{ "Card count" }</label>
                     <div class="control">
-                        <IntegerInput min=0 on_change={ update_cards } step=1 value={ i128::from(self.cards) } placeholder={ "Number of cards in pile" }/>
+                        <IntegerInput min=0 on_change={ update_cards } step=1 value={ i128::from(self.cards) } placeholder={ "Number of cards in pile" }
+                            tooltip={
+                                "The number of cards in this pile.\n\
+                                Each individual card should only belong to a single pile."
+                            }
+                        />
                     </div>
                 </div>
                 <div class="field">
                     <label class="label">{ "Randomness" }</label>
                     <div class="control">
-                        <IntegerInput min=0 max=100 on_change={ update_randomness } step=5 value={ self.randomness } placeholder={ "Percentage of randomness" }/>
+                        <IntegerInput min=0 max=100 on_change={ update_randomness } step=5 value={ self.randomness } placeholder={ "Percentage of randomness" }
+                            tooltip={
+                                "The isolated percentage chance that any card in this pile will be randomly distributed instead of evenly distributed to packs.\n\
+                                This will randomly place the card in any slot in a pack which is vacant due to that card also being randomly distributed.\n\
+                                Meaning at least two piles must have more than 0% for any effect, as otherwise they can only fill card slots they themself vacated.\n"
+                            }
+                        />
                     </div>
                 </div>
                 <div class="field">

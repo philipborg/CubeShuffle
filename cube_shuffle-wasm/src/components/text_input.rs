@@ -10,6 +10,7 @@ pub struct Props {
     pub value: String,
     pub on_change: Callback<String>,
     pub placeholder: Option<String>,
+    pub tooltip: Option<String>,
 }
 
 fn get_value_from_input_event(e: InputEvent) -> String {
@@ -26,6 +27,7 @@ pub fn text_input(props: &Props) -> Html {
         value,
         on_change,
         placeholder,
+        tooltip,
     } = props.clone();
 
     let oninput = Callback::from(move |input_event: InputEvent| {
@@ -33,12 +35,14 @@ pub fn text_input(props: &Props) -> Html {
     });
 
     html! {
-        <input
-            class="input"
-            type="text"
-            { value }
-            { oninput }
-            { placeholder }
-        />
+        <span data-tooltip={tooltip} class="has-tooltip-multiline has-tooltip-arrow">
+            <input
+                class="input"
+                type="text"
+                { value }
+                { oninput }
+                { placeholder }
+            />
+        </span>
     }
 }
