@@ -13,6 +13,7 @@ pub struct Props {
     pub placeholder: Option<String>,
     pub min: Option<i128>,
     pub max: Option<i128>,
+    pub tooltip: Option<String>,
 }
 
 fn get_value_from_input_event(e: InputEvent) -> Option<i128> {
@@ -37,6 +38,7 @@ pub fn number_input(props: &Props) -> Html {
         max,
         step,
         placeholder,
+        tooltip,
     } = props.clone();
 
     let oninput = Callback::from(move |input_event: InputEvent| {
@@ -44,15 +46,17 @@ pub fn number_input(props: &Props) -> Html {
     });
 
     html! {
-        <input
-            class="input"
-            type="number"
-            value={ map_number(value) }
-            min={ map_number(min) }
-            max={ map_number(max) }
-            step={ map_number(step) }
-            { oninput }
-            { placeholder }
-        />
+        <span data-tooltip={tooltip} class="has-tooltip-multiline has-tooltip-arrow">
+            <input
+                class="input"
+                type="number"
+                value={ map_number(value) }
+                min={ map_number(min) }
+                max={ map_number(max) }
+                step={ map_number(step) }
+                { oninput }
+                { placeholder }
+            />
+        </span>
     }
 }

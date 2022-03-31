@@ -163,6 +163,10 @@ impl Component for App {
                                             value={ self.seed.clone() }
                                             on_change={ update_seed }
                                             placeholder="Randomness seed"
+                                            tooltip={
+                                                "The randomness seed.\n\
+                                                If two identical configurations with the same seed are run the resulting pack definitions will be identical.\n"
+                                            }
                                         />
                                     </div>
                                 </div>
@@ -172,9 +176,10 @@ impl Component for App {
                                         <IntegerInput
                                             value={ i128::from(self.pack_size) }
                                             on_change={ update_pack_size }
-                                            placeholder={ "Number of cards per shuffled pack" }
+                                            placeholder={ "Number of cards per pack" }
                                             min={ 0 }
                                             max={ i128::from(u32::MAX) }
+                                            tooltip="The number of cards per pack in the draft."
                                         />
                                     </div>
                                 </div>
