@@ -38,7 +38,7 @@ pub struct App {
     state: State,
     seed: String,
     error_message: Option<String>,
-    pack_size: u32,
+    pack_size: usize,
 }
 
 fn get_seed(seed: &str) -> u64 {
@@ -64,13 +64,12 @@ fn distribute_shuffle(app: &App) -> Result<Vec<Pack<String>>, String> {
             Err(e) => {
                 return match e {
                     ShufflingErrors::EmptyPacks => Err(String::from("Empty pack.")),
-                    ShufflingErrors::UndividablePacks {
-                        pack_size,
-                        card_count,
-                        overflow,
+                    ShufflingErrors::CardOverflow {
+                        current_cards,
+                        max_cards,
                     } => Err(format!(
-                        "{} isn't dividable by {}, it overflows by {}.",
-                        card_count, pack_size, overflow
+                        "You have entered in total {} but your current build only supports {}.",
+                        current_cards, max_cards
                     )),
                 };
             }
@@ -116,7 +115,7 @@ impl Component for App {
             }
             Msg::UpdatePackSize(pack_size) => {
                 self.pack_size = pack_size
-                    .and_then(|ps| u32::try_from(ps).ok())
+                    .and_then(|ps| usize::try_from(ps).ok())
                     .unwrap_or(15);
                 true
             }
@@ -174,7 +173,7 @@ impl Component for App {
                                     <label class="label">{ "Pack size" }</label>
                                     <div class="control">
                                         <IntegerInput
-                                            value={ i128::from(self.pack_size) }
+                                            value={ self.pack_size as i128 }
                                             on_change={ update_pack_size }
                                             placeholder={ "Number of cards per pack" }
                                             min={ 0 }

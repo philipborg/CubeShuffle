@@ -20,7 +20,7 @@ pub struct Props {
 
 pub struct AddPile {
     name: String,
-    cards: u32,
+    cards: usize,
     randomness: i128,
 }
 
@@ -58,7 +58,7 @@ impl Component for AddPile {
                 false
             }
             Msg::UpdateCards(cards) => {
-                self.cards = cards.map_or(0, |i| u32::try_from(i).unwrap_or(0));
+                self.cards = cards.map_or(0, |i| usize::try_from(i).unwrap_or(0));
                 false
             }
             Msg::UpdateRandomness(randomness) => {
@@ -92,7 +92,7 @@ impl Component for AddPile {
                 <div class="field">
                     <label class="label">{ "Card count" }</label>
                     <div class="control">
-                        <IntegerInput min=0 on_change={ update_cards } step=1 value={ i128::from(self.cards) } placeholder={ "Number of cards in pile" }
+                        <IntegerInput min=0 on_change={ update_cards } step=1 value={ self.cards as i128 } placeholder={ "Number of cards in pile" }
                             tooltip={
                                 "The number of cards in this pile.\n\
                                 Each individual card should only belong to a single pile."

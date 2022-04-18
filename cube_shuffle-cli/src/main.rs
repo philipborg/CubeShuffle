@@ -45,7 +45,7 @@ enum Commands {
         #[clap(short = 's', long)]
         #[clap(value_name = "pack size")]
         #[clap(default_value_t = 15)]
-        pack_size: u32,
+        pack_size: usize,
     },
 }
 
