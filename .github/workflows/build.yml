@@ -26,15 +26,18 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          target: wasm32-unknown-unknown${{ runner.os == 'macOS' && ', aarch64-apple-darwin' || '' }}
+          target: wasm32-unknown-unknown
           components: rustfmt, clippy
           override: true
+      - name: Install aarch64 Darwin
+        if: runner.os == 'macOS'
+        run: rustup target add aarch64-apple-darwin
       - uses: Swatinem/rust-cache@v1
         with:
           working-directory: ${{ env.SOURCE_PATH }}
           cache-on-failure: true
       - name: Install webkit/GTK dependencies (Linux)
-        if: matrix.platform == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get -y update
           sudo apt-get -y install libwebkit2gtk-4.0-dev \
