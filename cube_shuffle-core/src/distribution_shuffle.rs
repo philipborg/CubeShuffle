@@ -49,14 +49,6 @@ where
     let card_count: u32 = piles.values().map(|p| p.cards).sum();
     let pack_count: u32 = card_count / pack_size;
 
-    if pack_count == 0 {
-        return Err(UndividablePacks {
-            overflow: pack_size,
-            pack_size,
-            card_count,
-        });
-    }
-
     let pack_overflow: u32 = card_count % pack_size;
 
     if pack_overflow != 0 {
@@ -145,14 +137,18 @@ mod tests {
     prop_compose! {
         fn arb_piles
             ()
-            (piles in hash_map(any::<String>(), arb_pile(1, 1_000), 1..100))
+            (piles in hash_map(any::<String>(), arb_pile(0, 1_000), 0..100))
             -> HashMap<String, Pile>{
             piles
         }
     }
 
-    fn get_valid_pack_sizes(cards: u32) -> Vec<u32> {
-        (1..=cards).filter(move |d| cards % d == 0).collect()
+    fn get_valid_pack_sizes(cards: u32) -> Option<Vec<u32>> {
+        if cards == 0 {
+            None
+        } else {
+            Some((1..=cards).filter(move |d| cards % d == 0).collect())
+        }
     }
 
     proptest! {
@@ -167,7 +163,10 @@ mod tests {
             println!("Card count={}", total_card_count);
             let pack_sizes = get_valid_pack_sizes(total_card_count);
             println!("Possible pack sizes={:?}", pack_sizes);
-            let pack_size = *pack_sizes.choose(&mut rng).unwrap();
+            let pack_size = match pack_sizes {
+                None => rng.gen_range(1..=u32::MAX),
+                Some(sizes) => *sizes.choose(&mut rng).unwrap()
+            };
             println!("Pack size={}", pack_size);
 
             let start_time = SystemTime::now();
