@@ -29,12 +29,15 @@ jobs:
           target: wasm32-unknown-unknown
           components: rustfmt, clippy
           override: true
+      - name: Install aarch64 Darwin
+        if: runner.os == 'macOS'
+        run: rustup target add aarch64-apple-darwin
       - uses: Swatinem/rust-cache@v1
         with:
           working-directory: ${{ env.SOURCE_PATH }}
           cache-on-failure: true
       - name: Install webkit/GTK dependencies (Linux)
-        if: matrix.platform == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get -y update
           sudo apt-get -y install libwebkit2gtk-4.0-dev \
@@ -56,7 +59,7 @@ jobs:
         if: runner.os == 'Windows'
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
       - name: Tauri Build
-        run: cargo tauri build || true
+        run: cargo tauri build ${{ runner.os == 'macOS' && '--target universal-apple-darwin' || '' }} || true
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
 
       - uses: actions/upload-artifact@v3
@@ -100,23 +103,23 @@ jobs:
 
       - name: Exfiltrate macOS app
         if: runner.os == 'macOS'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/macos/CubeShuffle.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
+        run: mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/macos/CubeShuffle.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
       - uses: actions/upload-artifact@v3
         name: Tauri macOS app
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
-          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.app
+          name: CubeShuffle-Tauri_${{ runner.os }}_Universal.app
           path: "CubeShuffle-GUI.app.tar.gz"
       - name: Exfiltrate macOS dmg
         if: runner.os == 'macOS'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/CubeShuffle"*".dmg" "./CubeShuffle-GUI.dmg"
+        run: mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/dmg/CubeShuffle"*".dmg" "./CubeShuffle-GUI.dmg"
       - uses: actions/upload-artifact@v3
         name: Tauri macOS dmg
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
-          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.dmg
+          name: CubeShuffle-Tauri_${{ runner.os }}_Universal.dmg
           path: "./CubeShuffle-GUI.dmg"
 
       - name: Cargo build
@@ -393,7 +396,7 @@ jobs:
             CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage.tar.gz
             CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle-GUI.deb
             CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi.zip
-            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle-GUI.dmg
-            CubeShuffle-Tauri_macOS_X64.app/CubeShuffle-GUI.app.tar.gz
+            CubeShuffle-Tauri_macOS_Universal.dmg/CubeShuffle-GUI.dmg
+            CubeShuffle-Tauri_macOS_Universal.app/CubeShuffle-GUI.app.tar.gz
             CubeShuffle-cli_*/*
             update_info.json
