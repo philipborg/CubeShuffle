@@ -57,11 +57,25 @@ impl Component for PackCard {
         } else {
             ""
         };
+
         let on_click = link.callback(|_| Msg::Clicked);
+        let mark_button = if props.checked {
+            html! {
+                <button class="delete"/>
+            }
+        } else {
+            html! {
+                <button class="button">{ "Done" }</button>
+            }
+        };
+
         return html! {
-            <div class="card" onclick={ on_click }>
-                <div class={ "card-header-title".to_owned() + checked_bg }>
-                    <label class="label">{ props.index + 1 }</label>
+            <div class="card">
+                <div class={ "card-header".to_owned() + checked_bg }>
+                    <label class="label card-header-title">{ props.index + 1 }</label>
+                    <span class="card-header-icon" onclick={ on_click }>
+                        { mark_button }
+                    </span>
                 </div>
                 <div class="card-content">
                     <table class="table is-hoverable is-fullwidth is-striped">
