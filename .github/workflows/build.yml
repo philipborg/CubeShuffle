@@ -109,7 +109,7 @@ jobs:
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
-          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.app
+          name: CubeShuffle-Tauri_${{ runner.os }}_Universal.app
           path: "CubeShuffle-GUI.app.tar.gz"
       - name: Exfiltrate macOS dmg
         if: runner.os == 'macOS'
@@ -119,7 +119,7 @@ jobs:
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
-          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.dmg
+          name: CubeShuffle-Tauri_${{ runner.os }}_Universal.dmg
           path: "./CubeShuffle-GUI.dmg"
 
       - name: Cargo build
@@ -396,7 +396,7 @@ jobs:
             CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage.tar.gz
             CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle-GUI.deb
             CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi.zip
-            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle-GUI.dmg
-            CubeShuffle-Tauri_macOS_X64.app/CubeShuffle-GUI.app.tar.gz
+            CubeShuffle-Tauri_macOS_Universal.dmg/CubeShuffle-GUI.dmg
+            CubeShuffle-Tauri_macOS_Universal.app/CubeShuffle-GUI.app.tar.gz
             CubeShuffle-cli_*/*
             update_info.json
