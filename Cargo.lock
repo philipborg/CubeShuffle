@@ -549,7 +549,7 @@ checksum = "b365fabc795046672053e29c954733ec3b05e4be654ab130fe8f1f94d7051f35"
 
 [[package]]
 name = "cube_shuffle-cli"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "clap",
  "cube_shuffle-core",
