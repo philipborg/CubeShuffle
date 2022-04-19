@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use clap::{AppSettings, Parser, Subcommand};
+use clap::{Parser, Subcommand};
 use parse_display::{Display, FromStr};
 use rand::prelude::StdRng;
 use rand::SeedableRng;
@@ -13,8 +13,7 @@ mod output;
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
-#[clap(global_setting(AppSettings::PropagateVersion))]
-#[clap(global_setting(AppSettings::UseLongFormatForHelpSubcommand))]
+#[clap(propagate_version = true)]
 struct Cli {
     #[clap(subcommand)]
     command: Commands,
@@ -93,6 +92,6 @@ mod tests {
     #[test]
     fn verify_app() {
         use clap::IntoApp;
-        Cli::into_app().debug_assert();
+        Cli::command().debug_assert();
     }
 }
