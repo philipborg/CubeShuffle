@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 
 use parse_display::{Display, FromStr};
@@ -6,14 +6,14 @@ use rand::prelude::SliceRandom;
 use rand::{Rng, RngCore};
 use serde::{Deserialize, Serialize};
 
-use crate::distribution_shuffle::ShufflingErrors::{EmptyPacks, UndividablePacks};
+use crate::distribution_shuffle::ShufflingErrors::{CardOverflow, EmptyPacks};
 
 pub type Odds = f64;
 
 #[derive(Clone, Debug, Copy, PartialEq, Display, FromStr, Serialize, Deserialize)]
 #[display("{cards}:{randomness}")]
 pub struct Pile {
-    pub cards: u32,
+    pub cards: usize,
     pub randomness: Odds,
 }
 
@@ -22,22 +22,21 @@ pub struct Pack<P>
 where
     P: Hash + Eq + Serialize,
 {
-    pub card_sources: HashMap<P, u32>,
+    pub card_sources: HashMap<P, usize>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum ShufflingErrors {
     EmptyPacks,
-    UndividablePacks {
-        pack_size: u32,
-        card_count: u32,
-        overflow: u32,
+    CardOverflow {
+        current_cards: u128,
+        max_cards: u128,
     },
 }
 
 pub fn shuffle<'a, P>(
     piles: &'a HashMap<P, Pile>,
-    pack_size: u32,
+    pack_size: usize,
     random: &mut impl RngCore,
 ) -> Result<Vec<Pack<&'a P>>, ShufflingErrors>
 where
@@ -46,55 +45,63 @@ where
     if pack_size == 0 {
         return Err(EmptyPacks);
     }
-    let card_count: u32 = piles.values().map(|p| p.cards).sum();
-    let pack_count: u32 = card_count / pack_size;
 
-    if pack_count == 0 {
-        return Err(UndividablePacks {
-            overflow: pack_size,
-            pack_size,
-            card_count,
+    let card_count: u128 = piles.values().map(|p| p.cards as u128).sum();
+
+    if card_count > usize::MAX as u128 {
+        return Err(CardOverflow {
+            current_cards: card_count,
+            max_cards: usize::MAX as u128,
         });
     }
 
-    let pack_overflow: u32 = card_count % pack_size;
+    let pack_count: usize = card_count as usize / pack_size;
 
-    if pack_overflow != 0 {
-        return Err(UndividablePacks {
-            pack_size,
-            card_count,
-            overflow: pack_overflow,
-        });
-    }
+    let pack_overflow: usize = card_count as usize % pack_size;
+    let overflow_cards: HashSet<usize> = if pack_overflow == 0 {
+        HashSet::new()
+    } else {
+        let mut cards: Vec<usize> = (0..(card_count as usize)).collect();
+        cards.shuffle(random);
+        cards.into_iter().take(pack_overflow as usize).collect()
+    };
 
-    let mut packs: Vec<HashMap<Option<&P>, u32>> = Vec::new();
+    let mut packs: Vec<HashMap<Option<&P>, usize>> = Vec::new();
     for _ in 0..pack_count {
         packs.push(HashMap::new())
     }
 
+    let mut card_index: usize = 0;
     let mut randomized: Vec<&P> = Vec::new();
     for (pile_name, pile) in piles {
+        let mut pile_modifier: usize = 0;
         for c in 0..pile.cards {
+            if overflow_cards.contains(&card_index) {
+                card_index += 1;
+                pile_modifier += 1;
+                continue;
+            }
+            card_index += 1;
             let skip: bool = random.gen_bool(pile.randomness);
             if skip {
                 randomized.push(pile_name);
             }
 
-            let pack_index: usize = (c % pack_count) as usize;
+            let pack_index: usize = (c - pile_modifier) % pack_count as usize;
             *packs[pack_index]
                 .entry(if skip { None } else { Some(pile_name) })
                 .or_insert(0) += 1;
         }
 
         packs.shuffle(random);
-        packs.sort_by_key(|k| k.values().sum::<u32>());
+        packs.sort_by_key(|k| k.values().sum::<usize>());
     }
 
     randomized.shuffle(random);
     let finalized_packs: Vec<Pack<&P>> = packs
         .iter()
         .map(|incomplete_pack| {
-            let mut card_sources: HashMap<&P, u32> = incomplete_pack
+            let mut card_sources: HashMap<&P, usize> = incomplete_pack
                 .iter()
                 .filter_map(|(source, amount)| (*source).map(|s| (s, *amount)))
                 .collect();
@@ -118,10 +125,10 @@ mod tests {
 
     use proptest::collection::hash_map;
     use proptest::prelude::*;
-    use rand::prelude::SliceRandom;
     use rand::rngs::StdRng;
     use rand::SeedableRng;
 
+    use crate::distribution_shuffle::ShufflingErrors::EmptyPacks;
     use crate::distribution_shuffle::{shuffle, Odds, Pile};
 
     prop_compose! {
@@ -132,7 +139,7 @@ mod tests {
 
     prop_compose! {
         fn arb_pile
-            (min_cards:u32, max_cards: u32)
+            (min_cards: usize, max_cards: usize)
             (cards in min_cards..max_cards, odds in arb_odds())
             -> Pile {
             Pile {
@@ -145,29 +152,23 @@ mod tests {
     prop_compose! {
         fn arb_piles
             ()
-            (piles in hash_map(any::<String>(), arb_pile(1, 1_000), 1..100))
+            (piles in hash_map(any::<String>(), arb_pile(0, 1_000), 0..100))
             -> HashMap<String, Pile>{
             piles
         }
-    }
-
-    fn get_valid_pack_sizes(cards: u32) -> Vec<u32> {
-        (1..=cards).filter(move |d| cards % d == 0).collect()
     }
 
     proptest! {
         #[test]
         fn shuffled_cards (
             piles in arb_piles(),
-            seed in any::<u64>()
+            seed in any::<u64>(),
         ){
             println!("Piles={}", piles.values().count());
             let mut rng = StdRng::seed_from_u64(seed);
-            let total_card_count:u32 = piles.values().map(|p| p.cards).sum();
+            let total_card_count:usize = piles.values().map(|p| p.cards).sum();
             println!("Card count={}", total_card_count);
-            let pack_sizes = get_valid_pack_sizes(total_card_count);
-            println!("Possible pack sizes={:?}", pack_sizes);
-            let pack_size = *pack_sizes.choose(&mut rng).unwrap();
+            let pack_size = rng.gen_range(1..=(if total_card_count == 0 {usize::MAX} else {total_card_count}));
             println!("Pack size={}", pack_size);
 
             let start_time = SystemTime::now();
@@ -177,7 +178,7 @@ mod tests {
                 Err(e) => {println!("Shuffling time measurement failed: {:?}", e)}
             }
 
-            let card_sources_count:Vec<u32> =
+            let card_sources_count:Vec<usize> =
                 shuffled.iter()
                 .flat_map(|p| {p.card_sources.values()})
                 .copied()
@@ -186,13 +187,23 @@ mod tests {
             // All card sources must be positive
             assert!(card_sources_count.iter().all(|c| {*c > 0}));
 
-            // Same number of total cards
-            assert_eq!(total_card_count, card_sources_count.iter().sum());
+            // Total cards should equal expected filled packs sum
+            assert_eq!((total_card_count / pack_size) * pack_size, card_sources_count.iter().sum());
 
             // All packs most be requested size
             for pack in shuffled {
                 assert_eq!(pack_size, pack.card_sources.values().sum());
             }
+        }
+
+        #[test]
+        fn empty_packs(
+            piles in arb_piles(),
+            seed in any::<u64>(),
+        ){
+            let mut rng = StdRng::seed_from_u64(seed);
+            let shuffled = shuffle(&piles, 0, &mut rng);
+            assert_eq!(Err(EmptyPacks), shuffled);
         }
     }
 }
