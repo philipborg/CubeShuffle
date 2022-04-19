@@ -55,23 +55,38 @@ fn get_seed(seed: &str) -> u64 {
 }
 
 fn distribute_shuffle(app: &App) -> Result<Vec<Pack<String>>, String> {
+    if app.piles.is_empty() {
+        return Err(String::from("Add piles before generating packs."));
+    }
+    let total_cards: u128 = app.piles.values().map(|p| p.cards as u128).sum();
+    if total_cards == 0 {
+        return Err(String::from("All piles are empty."));
+    }
     let seed = get_seed(&app.seed);
     let mut rng = StdRng::seed_from_u64(seed);
     let packs =
         match cube_shuffle_core::distribution_shuffle::shuffle(&app.piles, app.pack_size, &mut rng)
         {
-            Ok(p) => p,
+            Ok(p) => match p.len() {
+                0 => {
+                    return Err(format!(
+                        "{} card(s) is not enough to fill a single pack of size {}.",
+                        total_cards, app.pack_size
+                    ))
+                }
+                _ => p,
+            },
             Err(e) => {
-                return match e {
-                    ShufflingErrors::EmptyPacks => Err(String::from("Empty pack.")),
+                return Err(match e {
+                    ShufflingErrors::EmptyPacks => String::from("Empty pack."),
                     ShufflingErrors::CardOverflow {
                         current_cards,
                         max_cards,
-                    } => Err(format!(
+                    } => format!(
                         "You have entered in total {} but your current build only supports {}.",
                         current_cards, max_cards
-                    )),
-                };
+                    ),
+                });
             }
         };
     let owned_packs: Vec<Pack<String>> = packs
