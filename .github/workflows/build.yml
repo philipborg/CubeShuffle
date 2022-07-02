@@ -10,6 +10,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   SOURCE_PATH: "./src"
+  TRUNK_VERSION: "0.16.0"
 
 jobs:
   tauri-build:
@@ -49,7 +50,7 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev
       - name: Install Trunk
-        run: cargo install --locked trunk --version ~0.14.0
+        run: cargo install --locked trunk --version ${{ env.TRUNK_VERSION }}
       - name: Install Tauri
         run: cargo install tauri-cli --locked --version 1.0.2
 
@@ -152,7 +153,7 @@ jobs:
           working-directory: ${{ env.SOURCE_PATH }}
           cache-on-failure: true
       - name: Install Trunk
-        run: cargo install --locked trunk
+        run: cargo install --locked trunk --version ${{ env.TRUNK_VERSION }}
       - name: Build WASM
         run: trunk build --release --dist "${{ github.workspace }}/wasm_build"
         working-directory: ${{ env.SOURCE_PATH }}/cube_shuffle-wasm
