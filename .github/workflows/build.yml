@@ -383,6 +383,11 @@ jobs:
             }
           }' \
           > "update_info.json"
+      - name: Extract AppImage from archive
+        run: |
+          tar –xvzf "./CubeShuffle-GUI.AppImage.tar.gz"
+          mv *.AppImage CubeShuffle-GUI.AppImage
+        working-directory: ./CubeShuffle-Tauri_Linux_X64.AppImage
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -393,6 +398,7 @@ jobs:
           files: |
             CubeShuffle-Cordova-Android-Bundle/CubeShuffle_Android.aab
             CubeShuffle-Cordova-Android-Universal/CubeShuffle_Android.apk
+            CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage
             CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage.tar.gz
             CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle-GUI.deb
             CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi.zip
