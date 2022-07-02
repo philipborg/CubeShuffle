@@ -5,7 +5,7 @@
 . Download the correct compiled version from the `Assets` list.
 +
 * Linux
-** link:https://appimage.org[AppImage] (#recommended#) - Download, extract and run `CubeShuffle-GUI.AppImage.tar.gz`. Optionally choose `Integrate and run` during startup to install persistently.
+** link:https://appimage.org[AppImage] (#recommended#) - Download, extract and run `CubeShuffle-GUI.AppImage`. Optionally choose `Integrate and run` during startup to install persistently.
 ** Debian installation file (`deb`) - Download and install `CubeShuffle-GUI.deb`.
 * MacOS
 ** Disk Image (`dmg`) (#recommended#) - Download and install `CubeShuffle-GUI.dmg`.
