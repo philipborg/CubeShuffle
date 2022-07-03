@@ -7,8 +7,7 @@
     "distDir": "websrc",
     "devPath": "http://localhost:8080",
     "beforeDevCommand": "cd \"./cube_shuffle-wasm\" && trunk serve",
-    "beforeBuildCommand": "rm -f --interactive=never -R \"./src-tauri/websrc\" && mkdir \"./src-tauri/websrc\" && cd \"./cube_shuffle-wasm\" && trunk build --release --dist \"./../src-tauri/websrc\"",
-    "withGlobalTauri": false
+    "beforeBuildCommand": "rm -f --interactive=never -R \"./src-tauri/websrc\" && mkdir \"./src-tauri/websrc\" && cd \"./cube_shuffle-wasm\" && trunk build --release --dist \"./../src-tauri/websrc\""
   },
   "tauri": {
     "bundle": {
@@ -29,16 +28,14 @@
       "shortDescription": "",
       "longDescription": "",
       "deb": {
-        "depends": [],
-        "useBootstrapper": false
+        "depends": []
       },
       "macOS": {
         "frameworks": [],
-        "minimumSystemVersion": "",
-        "useBootstrapper": false,
         "exceptionDomain": "",
         "signingIdentity": null,
-        "entitlements": null
+        "entitlements": null,
+        "providerShortName": null
       },
       "windows": {
         "certificateThumbprint": null,
