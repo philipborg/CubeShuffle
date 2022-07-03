@@ -62,6 +62,10 @@ jobs:
         run: cargo tauri build ${{ runner.os == 'macOS' && '--target universal-apple-darwin' || '' }} || true
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
 
+      - name: List release files
+        shell: pwsh
+        run: Get-ChildItem -Recurse -Path "${{ env.SOURCE_PATH }}/target/release"
+
       - uses: actions/upload-artifact@v3
         name: Tauri Linux executable
         if: runner.os == 'Linux'
