@@ -38,9 +38,7 @@ jobs:
         with:
           working-directory: ${{ env.SOURCE_PATH }}
           cache-on-failure: true
-          key: >
-            Trunk:${{ env.TRUNK_VERSION }}
-            Tauri-CLI:${{ env.TAURI_CLI_VERSION }}
+          key: Trunk_${{ env.TRUNK_VERSION }}-TauriCLI_${{ env.TAURI_CLI_VERSION }}
       - name: Install webkit/GTK dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -156,6 +154,7 @@ jobs:
         with:
           working-directory: ${{ env.SOURCE_PATH }}
           cache-on-failure: true
+          key: Trunk_${{ env.TRUNK_VERSION }}
       - name: Install Trunk
         run: cargo install --locked trunk --version ${{ env.TRUNK_VERSION }}
       - name: Build WASM
