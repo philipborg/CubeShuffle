@@ -38,7 +38,7 @@ jobs:
         with:
           working-directory: ${{ env.SOURCE_PATH }}
           cache-on-failure: true
-          key: |
+          key: >
             Trunk:${{ env.TRUNK_VERSION }}
             Tauri-CLI:${{ env.TAURI_CLI_VERSION }}
       - name: Install webkit/GTK dependencies (Linux)
