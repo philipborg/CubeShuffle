@@ -107,9 +107,7 @@ jobs:
 
       - name: Exfiltrate macOS app
         if: runner.os == 'macOS'
-        run: |
-          mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/macos/CubeShuffle.app" "CubeShuffle-GUI.app"
-          mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/macos/CubeShuffle.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
+        run: mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/macos/CubeShuffle.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
       - uses: actions/upload-artifact@v3
         name: Tauri macOS app
         if: runner.os == 'macOS'
@@ -405,7 +403,6 @@ jobs:
             CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi
             CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi.zip
             CubeShuffle-Tauri_macOS_Universal.dmg/CubeShuffle-GUI.dmg
-            CubeShuffle-Tauri_macOS_Universal.app/CubeShuffle-GUI.app
             CubeShuffle-Tauri_macOS_Universal.app/CubeShuffle-GUI.app.tar.gz
             CubeShuffle-cli_*/*
             update_info.json

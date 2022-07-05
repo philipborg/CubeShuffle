@@ -9,7 +9,7 @@
 ** Debian installation file (`deb`) - Download and install `CubeShuffle-GUI.deb`.
 * MacOS
 ** Disk Image (`dmg`) (#recommended#) - Download and install `CubeShuffle-GUI.dmg`.
-** Executable (`app`) - Download and install `CubeShuffle-GUI.app`.
+** Executable (`app`) - Download and extract `CubeShuffle-GUI.app.tar.gz`.
 * Windows
 ** Windows Installer (#recommended#) - Download and run `CubeShuffle-GUI.msi`.
 Follow the installation steps.
