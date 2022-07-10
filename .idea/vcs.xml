@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cube_shuffle-wasm/bulma" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cube_shuffle-wasm/bulma-tooltip" vcs="Git" />
   </component>
 </project>

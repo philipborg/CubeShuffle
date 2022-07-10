@@ -1,0 +1,37 @@
+= Android installation
+
+The distribution of the Android build is currently unfinished.
+Publishing to the Google Play Store is link:https://github.com/philipborg/CubeShuffle/issues/67[on the roadmap].
+In the meanwhile you can manually install the APK file.
+
+[#_installing_apk]
+== Installing APK
+
+.Installation steps
+. Download the APK file from link:https://github.com/philipborg/CubeShuffle/releases[releases], from under the `Assets` header, to your Android device.
+The file should be named `CubeShuffle_Android.apk`.
+. Install the APK file using the built in package installer.
+This can be done by opening the downloaded APK file in your file manager, web browser's download list or some other application.
+.. If you haven't done so previously, you may need to enable application installations from `Unknown sources`.
+The setting is likely either in `Settings -> Security -> Unknown sources` OR `Settings -> Applications -> Unknown sources`.
+... Exact menu location of the setting varies between Android versions and manufacturer skins.
+... Newer versions of Android controls the ability to install APK files on a per-application basis.
+Allow only the application you will use to open the APK with, likely either the file manager or web browser.
+... Some Android builds will automatically put you in the correct settings menu if needed when trying to install the APK.
+Others just inform you that you need to enable `Unknown sources` but offer no further assistance.
+.. A rare few file managers will hide APK files by default.
+Check your file managers settings if you can't locate the APK file.
+. Optional: Remove the APK file.
+It isn't needed after a successful installation.
+
+=== Updates
+
+The APK installation doesn't offer automatic updates.
+Updates have to be installed manually by installing the APK for each update.
+
+[#_installing_aab]
+== Installing AAB
+
+The link:https://developer.android.com/guide/app-bundle[Android Application Bundle] is available from compiled link:https://github.com/philipborg/CubeShuffle/releases[releases] under `Assets`.
+To install use the link:https://developer.android.com/studio/command-line/bundletool[bundletool] to first generate an `apks` file which can then be installed, also using `bundletool`.
+Installing from `AAB` is a moderately advanced task and is therefor not recommended for most users.

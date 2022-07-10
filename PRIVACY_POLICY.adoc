@@ -2,7 +2,7 @@
 
 The CubeShuffle project only intends to deal with data for functional purposes as described below.
 The CubeShuffle project will not willfully sell nor share your personal data.
-The CubeShuffle doesn't necessarily collect the data described below but reserves the right to do so.
+The CubeShuffle project doesn't necessarily collect the data described below but reserves the right to do so.
 Before the first time any specific type of personal data or application data is stored CubeShuffle shall inform the user for permission before the data is processed.
 
 == Transparency

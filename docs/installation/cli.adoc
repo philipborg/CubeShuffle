@@ -1,0 +1,26 @@
+= Command Line Interface (CLI) installation
+
+.Installation sources
+* link:#_github_releases[Github Releases]
+* link:#_from_source[From source]
+
+[#_github_releases]
+== Github Releases
+
+Simply download one of the readily compiled executables from link:https://github.com/philipborg/CubeShuffle/releases[Releases] under `Assets`.
+Make sure you choose the correct one for your platform.
+
+[#_from_source]
+== From source
+
+.Steps
+. link:https://rustup.rs/[Install rustup] if not already installed. Recommendation is to not use a Linux package manager for this as it may not set the default paths.
+. Run the following link:https://doc.rust-lang.org/cargo/commands/cargo-install.html[cargo install] terminal command to install the latest `master` version:
++
+[source,sh]
+----
+cargo install --locked --git https://github.com/philipborg/CubeShuffle.git cube_shuffle-cli
+----
+For a specific link:https://github.com/philipborg/CubeShuffle/tags[tagged version] you may add the `--tag {TAG ID}` parameter after `install`.
+Without the `--tag` parameter the latest `master` branch version will be used which may not be released yet.
+. Run the program using `cube_shuffle-cli` from a terminal.

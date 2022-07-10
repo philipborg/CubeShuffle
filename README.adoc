@@ -11,26 +11,39 @@ image:https://img.shields.io/github/followers/philipborg?style=social[GitHub fol
 
 :toc:
 
-== Summary
 
-CubeShuffle aims to improve your card game cube shuffling by offering more control over the card distribution/randomness and/or increasing shuffling speed by combining digital and manual shuffling.
-It is designed to be generic for all card games with a cube format but I, the developer, primarily play Magic The Gathering (unaffiliated).
+== Introduction to CubeShuffle
 
-== [#Distribution shuffle]#link:docs/distribution_shuffle.adoc[Distribution shuffle]#
+CubeShuffle improves card game cube shuffling by offering more control over distribution, randomness and/or shuffling speed. It does this by combining digital and manual shuffling.
+CubeShuffle is designed to be generic for all card games with a cube format.
 
-A quick and easy shuffling method for cubes where cards can be assigned to and distributed based upon groups.
-Offers good control over the predictability as it can be controlled from being completely random to evenly distributed.
-Instructions on how to use it are available link:docs/distribution_shuffle.adoc[here].
+
+== Installation
+
+CubeShuffle is currently available on three different platforms:
+
+* link:docs/installation/desktop.adoc[Desktop GUI] (Recommended)
+* link:docs/installation/android.adoc[Android]
+* link:docs/installation/cli.adoc[Command Line Interface]
+
+Please note that there are currently no automatic updates operational on any platform.
+
+
+== Distribution Shuffle
+
+This is a quick and easy shuffling method for cubes, where cards can be assigned and distributed based on groups.
+It offers control over predictability as card shuffling can be controlled from being completely random to evenly distributed.
+Instructions on how to use Distribution Shuffle are available link:docs/distribution_shuffle.adoc[here].
+Use Distribution Shuffle with 100% randomness for all piles to speed up a completely random cube shuffle significantly.
+
 
 == Predictability and randomness
 
 You may be asking why anyone would want to control the randomness.
 Shouldn't the draft be completely random?
-If you want to, and it suits your cube, then I am not stopping you from complete randomness.
-Use link:docs/distribution_shuffle.adoc[Distribution Shuffle] with 100% randomness for all piles to speed up a completely random cube shuffle significantly.
+If you want to, and it suits your cube, you can, as CubeShuffle can use Distribution Shuffle to achieve 100% randomness.
 
-But most cubes don't actually want complete randomness.
-You want to ensure that most deck archetypes are playable and run a low chance of them being ruined by chance, or worse bad shuffling.
-(Though bad shuffling is significantly less likely when using CubeShuffle.)
+Most cubes don't want complete randomness.
+You want to ensure the deck archetypes are playable and have a low chance of being ruined by chance, or worse, bad shuffling (bad shuffling is significantly less likely when using CubeShuffle).
 This is why you never see sealed booster packs in MTG with just one card color as they are far from completely random but rather have controlled randomness.
 It lends itself to a significantly better drafting experience.

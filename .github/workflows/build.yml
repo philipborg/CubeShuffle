@@ -10,16 +10,18 @@ on:
 env:
   CARGO_TERM_COLOR: always
   SOURCE_PATH: "./src"
+  TRUNK_VERSION: "0.16.0"
+  TAURI_CLI_VERSION: "1.0.2"
 
 jobs:
-  rust-build:
+  tauri-build:
     strategy:
       fail-fast: false
       matrix:
         platform: [ macos-latest, ubuntu-latest, windows-2022 ]
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
           path: ${{ env.SOURCE_PATH }}
@@ -29,32 +31,36 @@ jobs:
           target: wasm32-unknown-unknown
           components: rustfmt, clippy
           override: true
+      - name: Install aarch64 Darwin
+        if: runner.os == 'macOS'
+        run: rustup target add aarch64-apple-darwin
       - uses: Swatinem/rust-cache@v1
         with:
           working-directory: ${{ env.SOURCE_PATH }}
+          cache-on-failure: true
+          key: Trunk_${{ env.TRUNK_VERSION }}-TauriCLI_${{ env.TAURI_CLI_VERSION }}
       - name: Install webkit/GTK dependencies (Linux)
-        if: matrix.platform == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
+          sudo apt-get -y update
           sudo apt-get -y install libwebkit2gtk-4.0-dev \
             build-essential \
             curl \
             wget \
             libssl-dev \
             libgtk-3-dev \
-            libappindicator3-dev \
-            patchelf \
+            libayatana-appindicator3-dev \
             librsvg2-dev
       - name: Install Trunk
-        run: cargo install --locked trunk
+        run: cargo install --locked trunk --version ${{ env.TRUNK_VERSION }}
       - name: Install Tauri
-        run: cargo install tauri-cli --locked --version 1.0.0-rc.6
+        run: cargo install tauri-cli --locked --version ${{ env.TAURI_CLI_VERSION }}
 
       - name: Tauri Build
-        run: cargo tauri build || true
+        run: cargo tauri build ${{ runner.os == 'macOS' && '--target universal-apple-darwin' || '' }} || true
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         name: Tauri Linux executable
         if: runner.os == 'Linux'
         with:
@@ -64,7 +70,7 @@ jobs:
       - name: Exfiltrate deb
         if: runner.os == 'Linux'
         run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/deb/cube-shuffle"*".deb" "CubeShuffle-GUI.deb"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         name: Tauri Linux deb
         if: runner.os == 'Linux'
         with:
@@ -73,45 +79,49 @@ jobs:
           path: "CubeShuffle-GUI.deb"
       - name: Exfiltrate AppImage
         if: runner.os == 'Linux'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle"*".AppImage.tar.gz" "CubeShuffle-GUI.AppImage.tar.gz"
-      - uses: actions/upload-artifact@v2
+        run: |
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle"*".AppImage" "CubeShuffle-GUI.AppImage"
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle"*".AppImage.tar.gz" "CubeShuffle-GUI.AppImage.tar.gz"
+      - uses: actions/upload-artifact@v3
         name: Tauri Linux AppImage
         if: runner.os == 'Linux'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.AppImage
-          path: "CubeShuffle-GUI.AppImage.tar.gz"
+          path: "CubeShuffle-GUI.AppImage*"
 
       - name: Exfiltrate MSI
         if: runner.os == 'Windows'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi.zip"
-      - uses: actions/upload-artifact@v2
+        run: |
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi"
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi.zip"
+      - uses: actions/upload-artifact@v3
         name: Tauri Windows Installer
         if: runner.os == 'Windows'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.msi
-          path: "./CubeShuffle-GUI.msi.zip"
+          path: "./CubeShuffle-GUI.msi*"
 
       - name: Exfiltrate macOS app
         if: runner.os == 'macOS'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/macos/CubeShuffle.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
-      - uses: actions/upload-artifact@v2
+        run: mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/macos/CubeShuffle.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
+      - uses: actions/upload-artifact@v3
         name: Tauri macOS app
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
-          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.app
-          path: "CubeShuffle-GUI.app.tar.gz"
+          name: CubeShuffle-Tauri_${{ runner.os }}_Universal.app
+          path: "CubeShuffle-GUI.app*"
       - name: Exfiltrate macOS dmg
         if: runner.os == 'macOS'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/dmg/CubeShuffle"*".dmg" "./CubeShuffle-GUI.dmg"
-      - uses: actions/upload-artifact@v2
+        run: mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/dmg/CubeShuffle"*".dmg" "./CubeShuffle-GUI.dmg"
+      - uses: actions/upload-artifact@v3
         name: Tauri macOS dmg
         if: runner.os == 'macOS'
         with:
           if-no-files-found: error
-          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.dmg
+          name: CubeShuffle-Tauri_${{ runner.os }}_Universal.dmg
           path: "./CubeShuffle-GUI.dmg"
 
       - name: Cargo build
@@ -121,20 +131,41 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all-features --workspace --all-targets --manifest-path "${{ env.SOURCE_PATH }}/Cargo.toml"
-      - name: Trunk build
-        run: trunk build --release --dist "${{ github.workspace }}/wasm_build"
-        working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
-      - uses: actions/upload-artifact@v2
-        with:
-          name: CubeShuffle-wasm_${{ matrix.platform }}
-          if-no-files-found: error
-          path: "${{ github.workspace }}/wasm_build"
       - name: Run tests
         run: cargo test --verbose --locked --release --no-fail-fast
         working-directory: ${{ env.SOURCE_PATH }}
       - name: Format check
         run: cargo fmt --all --check
         working-directory: ${{ env.SOURCE_PATH }}
+
+  wasm-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+          path: ${{ env.SOURCE_PATH }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          working-directory: ${{ env.SOURCE_PATH }}
+          cache-on-failure: true
+          key: Trunk_${{ env.TRUNK_VERSION }}
+      - name: Install Trunk
+        run: cargo install --locked trunk --version ${{ env.TRUNK_VERSION }}
+      - name: Build WASM
+        run: trunk build --release --dist "${{ github.workspace }}/wasm_build"
+        working-directory: ${{ env.SOURCE_PATH }}/cube_shuffle-wasm
+      - name: Upload wasm
+        uses: actions/upload-artifact@v3
+        with:
+          name: CubeShuffle-wasm
+          if-no-files-found: error
+          path: "${{ github.workspace }}/wasm_build"
 
   cli-build:
     strategy:
@@ -211,7 +242,7 @@ jobs:
             cross: true
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
       - uses: actions-rs/toolchain@v1
@@ -222,49 +253,41 @@ jobs:
       - uses: Swatinem/rust-cache@v1
         with:
           key: ${{ matrix.target }}
+          cache-on-failure: true
       - uses: actions-rs/cargo@v1
         name: Compile
         with:
           use-cross: ${{ matrix.cross }}
           command: build
           args: --release --locked --bin cube_shuffle-cli --target ${{ matrix.target }} --target-dir "${{ github.workspace }}/cli_build"
-      - name: Rename
-        if: runner.os != 'Windows'
-        run: mv "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli" "cube_shuffle-cli_${{ matrix.target }}"
-      - uses: actions/upload-artifact@v2
-        name: Upload binary
-        if: runner.os != 'Windows'
+      - name: Rename executable
+        run: >
+          mv
+          "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli${{runner.os == 'Windows' && '.exe' || ''}}"
+          "cube_shuffle-cli_${{ matrix.target }}${{runner.os == 'Windows' && '.exe' || ''}}"
+      - uses: actions/upload-artifact@v3
+        name: Upload executable
         with:
           name: CubeShuffle-cli_${{ matrix.target }}
           if-no-files-found: error
-          path: "cube_shuffle-cli_${{ matrix.target }}"
-      - name: Rename Windows
-        if: runner.os == 'Windows'
-        run: mv "${{ github.workspace }}/cli_build/${{ matrix.target }}/release/cube_shuffle-cli.exe" "cube_shuffle-cli_${{ matrix.target }}.exe"
-      - uses: actions/upload-artifact@v2
-        name: Upload Windows binary
-        if: runner.os == 'Windows'
-        with:
-          name: CubeShuffle-cli_${{ matrix.target }}
-          if-no-files-found: error
-          path: "cube_shuffle-cli_${{ matrix.target }}.exe"
+          path: "cube_shuffle-cli_${{ matrix.target }}${{runner.os == 'Windows' && '.exe' || ''}}"
 
   cordova-build:
     container:
       image: beevelop/cordova:latest
     runs-on: ubuntu-latest
-    needs: [ rust-build ]
+    needs: [ wasm-build ]
     steps:
       - name: Install Git
         run: apt-get -y update && apt-get -y install git
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
           path: ${{ env.SOURCE_PATH }}
       - name: Download compiled WASM
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
-          name: CubeShuffle-wasm_ubuntu-latest
+          name: CubeShuffle-wasm
           path: "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/www"
       - name: Build Android
         working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-cordova"
@@ -273,24 +296,70 @@ jobs:
           cordova build android --device --release --no-telemetry --verbose
       - name: Extract build output
         run: mv "${{ env.SOURCE_PATH }}/cube_shuffle-cordova/platforms/android/app/build/outputs/bundle/release/app-release.aab" "./CubeShuffle_Android.aab"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
-          name: CubeShuffle-Cordova-Android
+          name: CubeShuffle-Cordova-Android-Bundle
           if-no-files-found: error
           path: "./CubeShuffle_Android.aab"
 
+  apk-generate:
+    container:
+      image: openjdk:19-jdk-slim-bullseye
+    runs-on: ubuntu-latest
+    needs: [ cordova-build ]
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get -y update
+          apt-get -y install wget unzip git
+      - uses: actions/checkout@v3
+        with:
+          submodules: false
+          path: ${{ env.SOURCE_PATH }}
+      - name: Download bundletool
+        run: wget -O bundletool.jar https://github.com/google/bundletool/releases/download/1.9.0/bundletool-all-1.9.0.jar
+      - name: Download AAB
+        uses: actions/download-artifact@v3
+        with:
+          name: CubeShuffle-Cordova-Android-Bundle
+      - name: Build signed APKS
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: >
+          java -jar "./bundletool.jar" build-apks
+          --mode="universal"
+          --ks="${{ env.SOURCE_PATH }}/cubeshuffle.keystore"
+          --ks-pass="pass:${{ secrets.KEYSTORE_PASSWORD }}"
+          --ks-key-alias="cush"
+          --bundle="./CubeShuffle_Android.aab"
+          --output="./CubeShuffle_Android.apks"
+      - name: Build unsigned APKS
+        if: startsWith(github.ref, 'refs/tags/v') != true
+        run: >
+          java -jar "./bundletool.jar" build-apks
+          --mode="universal"
+          --bundle="./CubeShuffle_Android.aab"
+          --output="./CubeShuffle_Android.apks"
+      - name: Extract APK
+        run: unzip -p "./CubeShuffle_Android.apks" "universal.apk" > "./CubeShuffle_Android.apk"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: CubeShuffle-Cordova-Android-Universal
+          if-no-files-found: error
+          path: |
+            ./CubeShuffle_Android.apk
+
   publish:
-    needs: [ cordova-build, cli-build, rust-build ]
+    needs: [ cordova-build, cli-build, tauri-build, wasm-build, apk-generate ]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
       - name: List artifacts
         run: ls -R
       - name: Install jq
         run: |
-          sudo apt-get -y update \
-          && sudo apt-get -y install jq
+          sudo apt-get -y update
+          sudo apt-get -y install jq
       - name: Make update json
         run: |
           jq -n \
@@ -325,11 +394,14 @@ jobs:
           fail_on_unmatched_files: true
           prerelease: true
           files: |
-            CubeShuffle-Cordova-Android/CubeShuffle_Android.aab
+            CubeShuffle-Cordova-Android-Bundle/CubeShuffle_Android.aab
+            CubeShuffle-Cordova-Android-Universal/CubeShuffle_Android.apk
+            CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage
             CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage.tar.gz
             CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle-GUI.deb
+            CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi
             CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi.zip
-            CubeShuffle-Tauri_macOS_X64.dmg/CubeShuffle-GUI.dmg
-            CubeShuffle-Tauri_macOS_X64.app/CubeShuffle-GUI.app.tar.gz
+            CubeShuffle-Tauri_macOS_Universal.dmg/CubeShuffle-GUI.dmg
+            CubeShuffle-Tauri_macOS_Universal.app/CubeShuffle-GUI.app.tar.gz
             CubeShuffle-cli_*/*
             update_info.json

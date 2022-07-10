@@ -38,7 +38,7 @@ pub struct App {
     state: State,
     seed: String,
     error_message: Option<String>,
-    pack_size: u32,
+    pack_size: usize,
 }
 
 fn get_seed(seed: &str) -> u64 {
@@ -55,24 +55,38 @@ fn get_seed(seed: &str) -> u64 {
 }
 
 fn distribute_shuffle(app: &App) -> Result<Vec<Pack<String>>, String> {
+    if app.piles.is_empty() {
+        return Err(String::from("Add piles before generating packs."));
+    }
+    let total_cards: u128 = app.piles.values().map(|p| p.cards as u128).sum();
+    if total_cards == 0 {
+        return Err(String::from("All piles are empty."));
+    }
     let seed = get_seed(&app.seed);
     let mut rng = StdRng::seed_from_u64(seed);
     let packs =
         match cube_shuffle_core::distribution_shuffle::shuffle(&app.piles, app.pack_size, &mut rng)
         {
-            Ok(p) => p,
+            Ok(p) => match p.len() {
+                0 => {
+                    return Err(format!(
+                        "{} card(s) is not enough to fill a single pack of size {}.",
+                        total_cards, app.pack_size
+                    ))
+                }
+                _ => p,
+            },
             Err(e) => {
-                return match e {
-                    ShufflingErrors::EmptyPacks => Err(String::from("Empty pack.")),
-                    ShufflingErrors::UndividablePacks {
-                        pack_size,
-                        card_count,
-                        overflow,
-                    } => Err(format!(
-                        "{} isn't dividable by {}, it overflows by {}.",
-                        card_count, pack_size, overflow
-                    )),
-                };
+                return Err(match e {
+                    ShufflingErrors::EmptyPacks => String::from("Empty pack."),
+                    ShufflingErrors::CardOverflow {
+                        current_cards,
+                        max_cards,
+                    } => format!(
+                        "You have entered in total {} but your current build only supports {}.",
+                        current_cards, max_cards
+                    ),
+                });
             }
         };
     let owned_packs: Vec<Pack<String>> = packs
@@ -116,7 +130,7 @@ impl Component for App {
             }
             Msg::UpdatePackSize(pack_size) => {
                 self.pack_size = pack_size
-                    .and_then(|ps| u32::try_from(ps).ok())
+                    .and_then(|ps| usize::try_from(ps).ok())
                     .unwrap_or(15);
                 true
             }
@@ -150,7 +164,7 @@ impl Component for App {
                 let delete_pile = link.callback(Msg::DelPile);
                 let update_seed = link.callback(Msg::UpdateSeed);
                 let update_pack_size = link.callback(Msg::UpdatePackSize);
-                let on_shuffle = link.callback(|_| Msg::Shuffle);
+                let to_shuffle = link.callback(|_| Msg::Shuffle);
                 let on_error = link.callback(|e| Msg::Error(Some(e)));
                 html! {
                     <>
@@ -163,6 +177,10 @@ impl Component for App {
                                             value={ self.seed.clone() }
                                             on_change={ update_seed }
                                             placeholder="Randomness seed"
+                                            tooltip={
+                                                "The randomness seed.\n\
+                                                If two identical configurations with the same seed are run the resulting pack definitions will be identical.\n"
+                                            }
                                         />
                                     </div>
                                 </div>
@@ -170,17 +188,18 @@ impl Component for App {
                                     <label class="label">{ "Pack size" }</label>
                                     <div class="control">
                                         <IntegerInput
-                                            value={ i128::from(self.pack_size) }
+                                            value={ self.pack_size as i128 }
                                             on_change={ update_pack_size }
-                                            placeholder={ "Number of cards per shuffled pack" }
+                                            placeholder={ "Number of cards per pack" }
                                             min={ 0 }
                                             max={ i128::from(u32::MAX) }
+                                            tooltip="The number of cards per pack in the draft."
                                         />
                                     </div>
                                 </div>
                                 <div class="field">
                                     <div class="control">
-                                        <button class="button is-success" onclick={ on_shuffle }>{ "Shuffle" }</button>
+                                        <button class="button is-success" onclick={ to_shuffle }>{ "Generate packs" }</button>
                                     </div>
                                 </div>
                             </div>
@@ -193,10 +212,10 @@ impl Component for App {
                 }
             }
             State::Shuffled { packs } => {
-                let re_pile = link.callback(|_| Msg::Pile);
+                let to_pile = link.callback(|_| Msg::Pile);
                 html! {
                     <>
-                        <button class="button is-danger" onclick={ re_pile }>{ "Re-pile" }</button>
+                        <button class="button is-danger" onclick={ to_pile }>{ "Back" }</button>
                         <PackList packs={ packs.clone() }/>
                     </>
                 }
@@ -236,7 +255,7 @@ impl Component for App {
 
 #[cfg(test)]
 mod tests {
-    use crate::app::get_seed;
+    use crate::components::app::get_seed;
     use itertools::Itertools;
     use proptest::proptest;
 
