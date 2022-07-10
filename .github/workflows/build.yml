@@ -97,7 +97,7 @@ jobs:
       - name: Exfiltrate MSI
         if: runner.os == 'Windows'
         run: |
-          mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi"
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi" "./CubeShuffle-GUI.msi"
           mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi.zip"
       - uses: actions/upload-artifact@v3
         name: Tauri Windows Installer
@@ -116,7 +116,7 @@ jobs:
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_Universal.app
-          path: "CubeShuffle-GUI.app*"
+          path: "CubeShuffle-GUI.app.tar.gz"
       - name: Exfiltrate macOS dmg
         if: runner.os == 'macOS'
         run: mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/dmg/CubeShuffle"*".dmg" "./CubeShuffle-GUI.dmg"
