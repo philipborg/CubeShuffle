@@ -10,6 +10,8 @@ on:
 env:
   CARGO_TERM_COLOR: always
   SOURCE_PATH: "./src"
+  TRUNK_VERSION: "0.16.0"
+  TAURI_CLI_VERSION: "1.0.3"
 
 jobs:
   tauri-build:
@@ -36,6 +38,7 @@ jobs:
         with:
           working-directory: ${{ env.SOURCE_PATH }}
           cache-on-failure: true
+          key: Trunk_${{ env.TRUNK_VERSION }}-TauriCLI_${{ env.TAURI_CLI_VERSION }}
       - name: Install webkit/GTK dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -46,13 +49,12 @@ jobs:
             wget \
             libssl-dev \
             libgtk-3-dev \
-            libappindicator3-dev \
-            patchelf \
+            libayatana-appindicator3-dev \
             librsvg2-dev
       - name: Install Trunk
-        run: cargo install --locked trunk --version ~0.14.0
+        run: cargo install --locked trunk --version ${{ env.TRUNK_VERSION }}
       - name: Install Tauri
-        run: cargo install tauri-cli --locked --version 1.0.0-rc.8
+        run: cargo install tauri-cli --locked --version ${{ env.TAURI_CLI_VERSION }}
 
       - name: Windows CMD workaround
         run: trunk build --release --dist "./../src-tauri/websrc"
@@ -85,25 +87,29 @@ jobs:
           path: "CubeShuffle-GUI.deb"
       - name: Exfiltrate AppImage
         if: runner.os == 'Linux'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle"*".AppImage.tar.gz" "CubeShuffle-GUI.AppImage.tar.gz"
+        run: |
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle"*".AppImage" "CubeShuffle-GUI.AppImage"
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/appimage/cube-shuffle"*".AppImage.tar.gz" "CubeShuffle-GUI.AppImage.tar.gz"
       - uses: actions/upload-artifact@v3
         name: Tauri Linux AppImage
         if: runner.os == 'Linux'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.AppImage
-          path: "CubeShuffle-GUI.AppImage.tar.gz"
+          path: "CubeShuffle-GUI.AppImage*"
 
       - name: Exfiltrate MSI
         if: runner.os == 'Windows'
-        run: mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi.zip"
+        run: |
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi" "./CubeShuffle-GUI.msi"
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi.zip"
       - uses: actions/upload-artifact@v3
         name: Tauri Windows Installer
         if: runner.os == 'Windows'
         with:
           if-no-files-found: error
           name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.msi
-          path: "./CubeShuffle-GUI.msi.zip"
+          path: "./CubeShuffle-GUI.msi*"
 
       - name: Exfiltrate macOS app
         if: runner.os == 'macOS'
@@ -156,8 +162,9 @@ jobs:
         with:
           working-directory: ${{ env.SOURCE_PATH }}
           cache-on-failure: true
+          key: Trunk_${{ env.TRUNK_VERSION }}
       - name: Install Trunk
-        run: cargo install --locked trunk
+        run: cargo install --locked trunk --version ${{ env.TRUNK_VERSION }}
       - name: Build WASM
         run: trunk build --release --dist "${{ github.workspace }}/wasm_build"
         working-directory: ${{ env.SOURCE_PATH }}/cube_shuffle-wasm
@@ -397,8 +404,10 @@ jobs:
           files: |
             CubeShuffle-Cordova-Android-Bundle/CubeShuffle_Android.aab
             CubeShuffle-Cordova-Android-Universal/CubeShuffle_Android.apk
+            CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage
             CubeShuffle-Tauri_Linux_X64.AppImage/CubeShuffle-GUI.AppImage.tar.gz
             CubeShuffle-Tauri_Linux_X64.deb/CubeShuffle-GUI.deb
+            CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi
             CubeShuffle-Tauri_Windows_X64.msi/CubeShuffle-GUI.msi.zip
             CubeShuffle-Tauri_macOS_Universal.dmg/CubeShuffle-GUI.dmg
             CubeShuffle-Tauri_macOS_Universal.app/CubeShuffle-GUI.app.tar.gz
