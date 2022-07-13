@@ -34,16 +34,16 @@ jobs:
           --null-input
           --arg version "${GITHUB_REF##*/v}"
           -f release.conf.jq
-          > "${{ GITHUB_WORKSPACE }}/tauri.release.conf.json"
+          > "${{ github.workspace }}/tauri.release.conf.json"
         working-directory: ${{ env.SOURCE_PATH }}/src-tauri
       - name: Create empty tauri release configuration
         if: startsWith(github.ref, 'refs/tags/v') != true
         shell: bash
-        run: echo "{}" > "${{ GITHUB_WORKSPACE }}/tauri.release.conf.json"
+        run: echo "{}" > "${{ github.workspace }}/tauri.release.conf.json"
       - uses: actions/upload-artifact@v3
         with:
           name: tauri.release.conf.json
-          path: "${{ env.GITHUB_WORKSPACE }}/tauri.release.conf.json"
+          path: "${{ github.workspace }}/tauri.release.conf.json"
 
   tauri-build:
     needs: [ tauri-release-config ]
