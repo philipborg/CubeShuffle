@@ -375,16 +375,20 @@ jobs:
             "notes": "All releases at https://github.com/philipborg/CubeShuffle/releases",
             "pub_date": $now,
             "platforms": {
-              "darwin": {
-                "signature":"",
+              "darwin-aarch64": {
+                "signature": "",
                 "url": ("https://github.com/philipborg/CubeShuffle/releases/download/" + $tag_version + "/CubeShuffle-GUI.app.tar.gz")
               },
-              "linux": {
-                "signature":"",
+              "darwin-x86_64": {
+                "signature": "",
+                "url": ("https://github.com/philipborg/CubeShuffle/releases/download/" + $tag_version + "/CubeShuffle-GUI.app.tar.gz")
+              },
+              "linux-x86_64": {
+                "signature": "",
                 "url": ("https://github.com/philipborg/CubeShuffle/releases/download/" + $tag_version + "/CubeShuffle-GUI.AppImage.tar.gz")
               },
-              "win64": {
-                "signature":"",
+              "windows-x86_64": {
+                "signature": "",
                 "url": ("https://github.com/philipborg/CubeShuffle/releases/download/" + $tag_version + "/CubeShuffle-GUI.msi.zip")
               }
             }
