@@ -43,7 +43,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: tauri.release.conf.json
-          path: "${{ GITHUB_WORKSPACE }}/tauri.release.conf.json"
+          path: "${{ env.GITHUB_WORKSPACE }}/tauri.release.conf.json"
 
   tauri-build:
     needs: [ tauri-release-config ]
