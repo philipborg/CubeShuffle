@@ -100,6 +100,8 @@ jobs:
       - name: Tauri Build
         run: cargo tauri build ${{ runner.os == 'macOS' && '--target universal-apple-darwin' || '' }} --config "./tauri.release.conf.json"
         working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
+        env:
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
 
       - uses: actions/upload-artifact@v3
         name: Tauri Linux executable
