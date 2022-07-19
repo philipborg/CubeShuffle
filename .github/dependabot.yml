@@ -1,6 +1,10 @@
 version: 2
 updates:
-  - package-ecosystem: "cargo"
+  - package-ecosystem: cargo
     directory: "/" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: daily
+  - package-ecosystem: npm
+    directory: "/cube_shuffle-cordova"
+    schedule:
+      interval: daily
