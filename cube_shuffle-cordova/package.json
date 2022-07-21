@@ -13,7 +13,7 @@
   "author": "Philip Borgström",
   "license": "GNU Affero General Public License v3.0 or later",
   "devDependencies": {
-    "cordova-android": "^10.1.1"
+    "cordova-android": "^11.0.0"
   },
   "cordova": {
     "platforms": [
