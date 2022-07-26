@@ -4129,7 +4129,7 @@ dependencies = [
 [[package]]
 name = "yew"
 version = "0.19.3"
-source = "git+https://github.com/yewstack/yew/#2336ee28d6d5e9509d42b98bac31397c772f553b"
+source = "git+https://github.com/yewstack/yew/#8f269bbd6162295581a635710a9b74d58346cedf"
 dependencies = [
  "console_error_panic_hook",
  "gloo",
@@ -4151,7 +4151,7 @@ dependencies = [
 [[package]]
 name = "yew-macro"
 version = "0.19.3"
-source = "git+https://github.com/yewstack/yew/#2336ee28d6d5e9509d42b98bac31397c772f553b"
+source = "git+https://github.com/yewstack/yew/#8f269bbd6162295581a635710a9b74d58346cedf"
 dependencies = [
  "boolinator",
  "once_cell",
