@@ -11,7 +11,7 @@ env:
   CARGO_TERM_COLOR: always
   SOURCE_PATH: "./src"
   TRUNK_VERSION: "0.16.0"
-  TAURI_CLI_VERSION: "1.0.4"
+  TAURI_CLI_VERSION: "1.0.5"
 
 jobs:
   tauri-build:
