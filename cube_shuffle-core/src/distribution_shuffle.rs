@@ -17,7 +17,7 @@ pub struct Pile {
     pub randomness: Odds,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Pack<P>
 where
     P: Hash + Eq + Serialize,
@@ -25,7 +25,7 @@ where
     pub card_sources: HashMap<P, usize>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ShufflingErrors {
     EmptyPacks,
     CardOverflow {

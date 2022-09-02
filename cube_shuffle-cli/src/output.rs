@@ -15,7 +15,7 @@ pub fn to_string<O>(format: Formats, output_data: O) -> String
 where
     O: Debug + Serialize,
 {
-    return match format {
+    match format {
         Formats::Debug => {
             format!("{:?}", output_data)
         }
@@ -24,5 +24,5 @@ where
         }
         Formats::Json => serde_json::to_string(&output_data).unwrap(),
         Formats::Yaml => serde_yaml::to_string(&output_data).unwrap(),
-    };
+    }
 }

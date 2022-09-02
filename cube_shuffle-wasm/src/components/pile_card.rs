@@ -38,7 +38,7 @@ impl Component for PileCard {
         let delete = ctx.link().callback(|_| Msg::Delete);
         let pile = props.pile;
         let randomness = pile.randomness * 100.0;
-        return html! {
+        html! {
             <article class="message is-medium">
                 <div class="message-header">
                     <label>{ props.name.clone() }</label>
@@ -59,6 +59,6 @@ impl Component for PileCard {
                     </table>
                 </div>
             </article>
-        };
+        }
     }
 }
