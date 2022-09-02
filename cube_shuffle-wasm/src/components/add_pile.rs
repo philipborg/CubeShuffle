@@ -76,7 +76,7 @@ impl Component for AddPile {
         let update_cards = ctx.link().callback(Msg::UpdateCards);
         let update_randomness = ctx.link().callback(Msg::UpdateRandomness);
         let submit = ctx.link().callback(|_| Msg::Add);
-        return html! {
+        html! {
             <>
                 <div class="field">
                     <label class="label">{ "Pile name" }</label>
@@ -118,6 +118,6 @@ impl Component for AddPile {
                     </div>
                 </div>
             </>
-        };
+        }
     }
 }

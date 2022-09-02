@@ -5,7 +5,7 @@ use cube_shuffle_core::distribution_shuffle::Pack;
 
 use crate::components::pack_card::PackCard;
 
-#[derive(Clone, PartialEq, Properties)]
+#[derive(Clone, PartialEq, Eq, Properties)]
 pub struct Props {
     pub packs: Vec<Pack<String>>,
 }
@@ -70,10 +70,10 @@ impl Component for PackList {
                 }
             })
             .collect();
-        return html! {
+        html! {
             <div class="columns is-multiline is-centered">
                 { packs }
             </div>
-        };
+        }
     }
 }

@@ -26,7 +26,7 @@ pub enum Msg {
     Error(Option<String>),
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum State {
     Piling,
     Shuffled { packs: Vec<Pack<String>> },
@@ -224,15 +224,15 @@ impl Component for App {
 
         let clear_error = link.callback(|_| Msg::Error(None));
         let error_html: Html = self.error_message.clone().map_or(html! {}, |e| {
-            return html! {
+            html! {
                 <div class="notification is-danger">
                     <button onclick={ clear_error } class="delete"></button>
                     <p>{ e }</p>
                 </div>
-            };
+            }
         });
 
-        return html! {
+        html! {
             <>
                 <section class="section has-background-black-ter">
                     <div class="container">
@@ -249,7 +249,7 @@ impl Component for App {
                 { error_html }
                 { content }
             </>
-        };
+        }
     }
 }
 

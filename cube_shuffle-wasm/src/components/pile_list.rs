@@ -16,7 +16,7 @@ pub fn pile_card(props: &Props) -> Html {
         .piles
         .iter()
         .map(|(name, pile)| {
-            return html! {
+            html! {
                 <div class="column is-narrow">
                     <PileCard
                         name={ name.clone() }
@@ -24,13 +24,13 @@ pub fn pile_card(props: &Props) -> Html {
                         delete={ &props.delete_pile }
                     />
                 </div>
-            };
+            }
         })
         .collect();
 
-    return html! {
+    html! {
         <div class="columns is-multiline is-centered">
             { cards }
         </div>
-    };
+    }
 }

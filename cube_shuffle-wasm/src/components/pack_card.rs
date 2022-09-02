@@ -69,7 +69,7 @@ impl Component for PackCard {
             }
         };
 
-        return html! {
+        html! {
             <div class="card">
                 <div class={ "card-header".to_owned() + checked_bg }>
                     <label class="label card-header-title">{ props.index + 1 }</label>
@@ -85,6 +85,6 @@ impl Component for PackCard {
                     </table>
                 </div>
             </div>
-        };
+        }
     }
 }
