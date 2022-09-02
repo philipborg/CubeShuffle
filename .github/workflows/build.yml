@@ -131,10 +131,9 @@ jobs:
       - name: Cargo build
         run: cargo build --verbose --locked --release
         working-directory: ${{ env.SOURCE_PATH }}
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features --workspace --all-targets --manifest-path "${{ env.SOURCE_PATH }}/Cargo.toml"
+      - name: Clippy
+        run: cargo clippy --all-features --workspace --all-targets -- -D warnings
+        working-directory: ${{ env.SOURCE_PATH }}
       - name: Run tests
         run: cargo test --verbose --locked --release --no-fail-fast
         working-directory: ${{ env.SOURCE_PATH }}
