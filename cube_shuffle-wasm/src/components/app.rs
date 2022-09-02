@@ -223,14 +223,14 @@ impl Component for App {
         };
 
         let clear_error = link.callback(|_| Msg::Error(None));
-        let error_html: Html = self.error_message.clone().map_or(html! {}, |e|
+        let error_html: Html = self.error_message.clone().map_or(html! {}, |e| {
             html! {
                 <div class="notification is-danger">
                     <button onclick={ clear_error } class="delete"></button>
                     <p>{ e }</p>
                 </div>
             }
-        );
+        });
 
         html! {
             <>
