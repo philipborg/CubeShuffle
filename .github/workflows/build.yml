@@ -277,12 +277,15 @@ jobs:
 
   cordova-build:
     container:
-      image: beevelop/cordova:latest
+      image: cimg/android:2022.09.2-node
+      options: --user root
     runs-on: ubuntu-latest
     needs: [ wasm-build ]
     steps:
-      - name: Install Git
-        run: apt-get -y update && apt-get -y install git
+      - name: Install cordova
+        run: npm install -g cordova@11.0.0
+      - name: Install Android build tools
+        run: sdkmanager "build-tools;30.0.3"
       - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
