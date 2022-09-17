@@ -278,13 +278,12 @@ jobs:
   cordova-build:
     container:
       image: cimg/android:2022.09.2-node
+      options: --user root
     runs-on: ubuntu-latest
     needs: [ wasm-build ]
     steps:
-      - name: Install Git
-        run: sudo apt-get -y update && sudo apt-get -y install git
       - name: Install cordova
-        run: sudo npm install -g cordova
+        run: npm install -g cordova
       - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
