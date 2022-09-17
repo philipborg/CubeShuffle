@@ -283,7 +283,7 @@ jobs:
     needs: [ wasm-build ]
     steps:
       - name: Install cordova
-        run: npm install -g cordova
+        run: npm install -g cordova@11.0.0
       - name: Install Android build tools
         run: sdkmanager "build-tools;30.0.3"
       - uses: actions/checkout@v3
