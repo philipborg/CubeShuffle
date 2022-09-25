@@ -44,11 +44,11 @@ jobs:
         with:
           working-directory: ${{ env.SOURCE_PATH }}
           cache-on-failure: true
-          key: Trunk_${{ input.TRUNK_VERSION }}-TauriCLI_${{ input.TAURI_CLI_VERSION }}
+          key: Trunk_${{ inputs.TRUNK_VERSION }}-TauriCLI_${{ inputs.TAURI_CLI_VERSION }}
       - name: Install Trunk
-        run: cargo install --locked trunk --version ${{ input.TRUNK_VERSION }}
+        run: cargo install --locked trunk --version ${{ inputs.TRUNK_VERSION }}
       - name: Install Tauri
-        run: cargo install tauri-cli --locked --version ${{ input.TAURI_CLI_VERSION }}
+        run: cargo install tauri-cli --locked --version ${{ inputs.TAURI_CLI_VERSION }}
 
       - name: Tauri Build
         run: cargo tauri build || true
