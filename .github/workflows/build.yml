@@ -14,15 +14,20 @@ env:
   TAURI_CLI_VERSION: "1.1.1"
 
 jobs:
-  tauri-build:
-    strategy:
-      matrix:
-        template: [
-          'tauri-linux-build',
-          'tauri-macos-build',
-          'tauri-windows-build'
-        ]
-    uses: './.github/workflows/${{ matrix.template }}.yml'
+  tauri-linux-build:
+    uses: ./.github/workflows/tauri-linux-build.yml
+    with:
+      TRUNK_VERSION: ${ TRUNK_VERSION }
+      TAURI_CLI_VERSION: ${ TAURI_CLI_VERSION }
+
+  tauri-macos-build:
+    uses: ./.github/workflows/tauri-macos-build.yml
+    with:
+      TRUNK_VERSION: ${ TRUNK_VERSION }
+      TAURI_CLI_VERSION: ${ TAURI_CLI_VERSION }
+
+  tauri-windows-build:
+    uses: ./.github/workflows/tauri-windows-build.yml
     with:
       TRUNK_VERSION: ${ TRUNK_VERSION }
       TAURI_CLI_VERSION: ${ TAURI_CLI_VERSION }
