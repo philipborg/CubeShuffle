@@ -3,7 +3,7 @@ name: Builds the Cordova project from pre-built WASM
 on:
   workflow_call:
 
-job:
+jobs:
   cordova-build:
     container:
       image: cimg/android:2022.09.2-node
