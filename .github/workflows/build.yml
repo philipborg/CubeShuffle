@@ -21,22 +21,22 @@ jobs:
           'tauri-macos-build',
           'tauri-windows-build'
         ]
-    uses: './.github/workflows/templates/${{ matrix.template }}.yml'
+    uses: './.github/workflows/${{ matrix.template }}.yml'
     with:
       TRUNK_VERSION: ${{ env.TRUNK_VERSION }}
       TAURI_CLI_VERSION: ${{ env.TAURI_CLI_VERSION }}
 
   validate:
-    uses: './.github/workflows/templates/validate.yml'
+    uses: './.github/workflows/validate.yml'
 
   wasm-build:
-    uses: './.github/workflows/templates/wasm-build.yml'
+    uses: './.github/workflows/wasm-build.yml'
     with:
       TRUNK_VERSION: ${{ env.TRUNK_VERSION }}
 
   cli-build:
-    uses: './.github/workflows/templates/cli-builds.yml'
+    uses: './.github/workflows/cli-builds.yml'
 
   cordova-build:
-    uses: './.github/workflows/templates/cordova-build.yml'
+    uses: './.github/workflows/cordova-build.yml'
     needs: wasm-build
