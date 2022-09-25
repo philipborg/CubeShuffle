@@ -1,0 +1,37 @@
+name: Validate cargo projects
+
+on:
+  workflow_call:
+
+env:
+  CARGO_TERM_COLOR: always
+  SOURCE_PATH: "./src"
+
+jobs:
+  validate:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+          path: ${{ env.SOURCE_PATH }}
+      - name: Fake websrc
+        shell: python
+        working-directory: ${{ env.SOURCE_PATH }}
+        run: os.mkdir("./src-tauri/websrc")
+
+      - name: Cargo build
+        run: cargo build --verbose --locked --release
+        working-directory: ${{ env.SOURCE_PATH }}
+      - name: Run tests
+        run: cargo test --verbose --locked --release --no-fail-fast
+        working-directory: ${{ env.SOURCE_PATH }}
+      - name: Clippy
+        run: cargo clippy --all-features --workspace --all-targets -- -D warnings
+        working-directory: ${{ env.SOURCE_PATH }}
+      - name: Format check
+        run: cargo fmt --all --check
+        working-directory: ${{ env.SOURCE_PATH }}

@@ -1,0 +1,63 @@
+name: Tauri MacOS Build
+
+on:
+  workflow_call:
+    inputs:
+      TRUNK_VERSION:
+        required: true
+        type: string
+      TAURI_VERSION:
+        required: true
+        type: string
+
+env:
+  CARGO_TERM_COLOR: always
+  SOURCE_PATH: "./src"
+
+jobs:
+  build-tauri:
+    name: Builds Tauri for MacOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+          path: ${{ env.SOURCE_PATH }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          components: rustfmt, clippy
+          override: true
+      - name: Install aarch64 Darwin
+        run: rustup target add aarch64-apple-darwin
+      - uses: Swatinem/rust-cache@v1
+        with:
+          working-directory: ${{ inputs.SOURCE_PATH }}
+          cache-on-failure: true
+          key: Trunk_${{ inputs.TRUNK_VERSION }}-TauriCLI_${{ inputs.TAURI_CLI_VERSION }}
+      - name: Install Trunk
+        run: cargo install --locked trunk --version ${{ inputs.TRUNK_VERSION }}
+      - name: Install Tauri
+        run: cargo install tauri-cli --locked --version ${{ inputs.TAURI_CLI_VERSION }}
+
+      - name: Tauri Build
+        run: cargo tauri build --target universal-apple-darwin || true
+        working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
+
+      - name: Exfiltrate macOS app
+        run: mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/macos/CubeShuffle.app.tar.gz" "CubeShuffle-GUI.app.tar.gz"
+      - uses: actions/upload-artifact@v3
+        name: Tauri macOS app
+        with:
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_Universal.app
+          path: "CubeShuffle-GUI.app.tar.gz"
+      - name: Exfiltrate macOS dmg
+        run: mv "${{ env.SOURCE_PATH }}/target/universal-apple-darwin/release/bundle/dmg/CubeShuffle"*".dmg" "./CubeShuffle-GUI.dmg"
+      - uses: actions/upload-artifact@v3
+        name: Tauri macOS dmg
+        with:
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_Universal.dmg
+          path: "./CubeShuffle-GUI.dmg"

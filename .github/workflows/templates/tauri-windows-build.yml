@@ -1,0 +1,58 @@
+name: Tauri Windows Build
+
+on:
+  workflow_call:
+    inputs:
+      TRUNK_VERSION:
+        required: true
+        type: string
+      TAURI_VERSION:
+        required: true
+        type: string
+
+env:
+  CARGO_TERM_COLOR: always
+  SOURCE_PATH: "./src"
+
+jobs:
+  build-tauri:
+    name: Builds Tauri for Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+          path: ${{ env.SOURCE_PATH }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          components: rustfmt, clippy
+          override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          working-directory: ${{ env.SOURCE_PATH }}
+          cache-on-failure: true
+          key: Trunk_${{ inputs.TRUNK_VERSION }}-TauriCLI_${{ inputs.TAURI_CLI_VERSION }}
+      - name: Install Trunk
+        run: cargo install --locked trunk --version ${{ inputs.TRUNK_VERSION }}
+      - name: Install Tauri
+        run: cargo install tauri-cli --locked --version ${{ inputs.TAURI_CLI_VERSION }}
+
+      - name: Windows CMD workaround
+        run: trunk build --release --dist "./../src-tauri/websrc"
+        working-directory: "${{ env.SOURCE_PATH }}/cube_shuffle-wasm"
+      - name: Tauri Build
+        run: cargo tauri build || true
+        working-directory: "${{ env.SOURCE_PATH }}/src-tauri"
+
+      - name: Exfiltrate MSI
+        run: |
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi" "./CubeShuffle-GUI.msi"
+          mv "${{ env.SOURCE_PATH }}/target/release/bundle/msi/CubeShuffle*.msi.zip" "./CubeShuffle-GUI.msi.zip"
+      - uses: actions/upload-artifact@v3
+        name: Tauri Windows Installer
+        with:
+          if-no-files-found: error
+          name: CubeShuffle-Tauri_${{ runner.os }}_${{ runner.arch }}.msi
+          path: "./CubeShuffle-GUI.msi*"
