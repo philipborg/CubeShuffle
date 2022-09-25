@@ -5,6 +5,7 @@ on:
     branches: [ 'master', 'develop' ]
   pull_request:
     branches: [ 'master', 'develop' ]
+  workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
@@ -13,18 +14,18 @@ env:
   TAURI_CLI_VERSION: "1.1.1"
 
 jobs:
-#  tauri-build:
-#    strategy:
-#      matrix:
-#        template: [
-#          'tauri-linux-build',
-#          'tauri-macos-build',
-#          'tauri-windows-build'
-#        ]
-#    uses: './.github/workflows/${{ matrix.template }}.yml'
-#    with:
-#      TRUNK_VERSION: ${{ env.TRUNK_VERSION }}
-#      TAURI_CLI_VERSION: ${{ env.TAURI_CLI_VERSION }}
+  tauri-build:
+    strategy:
+      matrix:
+        template: [
+          'tauri-linux-build',
+          'tauri-macos-build',
+          'tauri-windows-build'
+        ]
+    uses: './.github/workflows/${{ matrix.template }}.yml'
+    with:
+      TRUNK_VERSION: ${ TRUNK_VERSION }
+      TAURI_CLI_VERSION: ${ TAURI_CLI_VERSION }
 
   validate:
     uses: './.github/workflows/validate.yml'
@@ -32,7 +33,7 @@ jobs:
   wasm-build:
     uses: './.github/workflows/wasm-build.yml'
     with:
-      TRUNK_VERSION: ${{ env.TRUNK_VERSION }}
+      TRUNK_VERSION: ${ TRUNK_VERSION }
 
   cli-build:
     uses: './.github/workflows/cli-builds.yml'
