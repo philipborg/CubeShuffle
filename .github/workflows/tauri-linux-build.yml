@@ -6,7 +6,7 @@ on:
       TRUNK_VERSION:
         required: true
         type: string
-      TAURI_VERSION:
+      TAURI_CLI_VERSION:
         required: true
         type: string
 
