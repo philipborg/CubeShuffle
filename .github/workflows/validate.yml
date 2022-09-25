@@ -19,9 +19,9 @@ jobs:
           submodules: 'recursive'
           path: ${{ env.SOURCE_PATH }}
       - name: Fake websrc
-        shell: python
+        shell: pwsh
         working-directory: ${{ env.SOURCE_PATH }}
-        run: os.mkdir("./src-tauri/websrc")
+        run: New-Item -ItemType "directory" -Path "./src-tauri/websrc"
 
       - name: Cargo build
         run: cargo build --verbose --locked --release
