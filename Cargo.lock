@@ -4072,7 +4072,7 @@ checksum = "d2d7d3948613f75c98fd9328cfdcc45acc4d360655289d0a7d4ec931392200a3"
 [[package]]
 name = "yew"
 version = "0.19.3"
-source = "git+https://github.com/yewstack/yew/#6751946477b836745366ddfbf197d0a0adcd89d5"
+source = "git+https://github.com/yewstack/yew/#6c91afa13e2dca77d1c590aade6fb230cf31366a"
 dependencies = [
  "console_error_panic_hook",
  "futures",
@@ -4095,7 +4095,7 @@ dependencies = [
 [[package]]
 name = "yew-macro"
 version = "0.19.3"
-source = "git+https://github.com/yewstack/yew/#6751946477b836745366ddfbf197d0a0adcd89d5"
+source = "git+https://github.com/yewstack/yew/#6c91afa13e2dca77d1c590aade6fb230cf31366a"
 dependencies = [
  "boolinator",
  "once_cell",
