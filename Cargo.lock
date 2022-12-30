@@ -2218,6 +2218,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
+name = "pinned"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a829027bd95e54cfe13e3e258a1ae7b645960553fb82b75ff852c29688ee595b"
+dependencies = [
+ "futures",
+ "rustversion",
+ "thiserror",
+]
+
+[[package]]
 name = "pkg-config"
 version = "0.3.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2331,6 +2342,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a2ca2c61bc9f3d74d2886294ab7b9853abd9c1ad903a3ac7815c58989bb7bab"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "prokio"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03b55e106e5791fa5a13abd13c85d6127312e8e09098059ca2bc9b03ca4cf488"
+dependencies = [
+ "futures",
+ "gloo",
+ "num_cpus",
+ "once_cell",
+ "pin-project",
+ "pinned",
+ "tokio",
+ "tokio-stream",
+ "wasm-bindgen-futures",
 ]
 
 [[package]]
@@ -3370,6 +3398,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "tokio-stream"
+version = "0.1.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d660770404473ccd7bc9f8b28494a811bc18542b915c0855c51e8f419d5223ce"
+dependencies = [
+ "futures-core",
+ "pin-project-lite",
+ "tokio",
+]
+
+[[package]]
 name = "toml"
 version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4071,8 +4110,8 @@ checksum = "d2d7d3948613f75c98fd9328cfdcc45acc4d360655289d0a7d4ec931392200a3"
 
 [[package]]
 name = "yew"
-version = "0.19.3"
-source = "git+https://github.com/yewstack/yew/#0ecee11a2f8a8814e1997c2d0b4ab0b49da949d0"
+version = "0.20.0"
+source = "git+https://github.com/yewstack/yew/#38e2478d9a2b7a251f6fd068675618326d18fd5a"
 dependencies = [
  "console_error_panic_hook",
  "futures",
@@ -4080,11 +4119,12 @@ dependencies = [
  "implicit-clone",
  "indexmap",
  "js-sys",
- "once_cell",
- "pin-project",
+ "prokio",
+ "rustversion",
  "serde",
  "slab",
  "thiserror",
+ "tokio",
  "tracing",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -4094,8 +4134,8 @@ dependencies = [
 
 [[package]]
 name = "yew-macro"
-version = "0.19.3"
-source = "git+https://github.com/yewstack/yew/#0ecee11a2f8a8814e1997c2d0b4ab0b49da949d0"
+version = "0.20.0"
+source = "git+https://github.com/yewstack/yew/#38e2478d9a2b7a251f6fd068675618326d18fd5a"
 dependencies = [
  "boolinator",
  "once_cell",
