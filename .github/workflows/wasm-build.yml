@@ -1,0 +1,42 @@
+name: Build WebAssembly files
+
+on:
+  workflow_call:
+    inputs:
+      TRUNK_VERSION:
+        required: true
+        type: string
+
+env:
+  CARGO_TERM_COLOR: always
+  SOURCE_PATH: "./src"
+
+jobs:
+  wasm-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+          path: ${{ env.SOURCE_PATH }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          working-directory: ${{ env.SOURCE_PATH }}
+          cache-on-failure: true
+          key: Trunk_${{ inputs.TRUNK_VERSION }}
+      - name: Install Trunk
+        run: cargo install --locked trunk --version ${{ inputs.TRUNK_VERSION }}
+      - name: Build WASM
+        run: trunk build --release --dist "${{ github.workspace }}/wasm_build"
+        working-directory: ${{ env.SOURCE_PATH }}/cube_shuffle-wasm
+      - name: Upload wasm
+        uses: actions/upload-artifact@v3
+        with:
+          name: CubeShuffle-wasm
+          if-no-files-found: error
+          path: "${{ github.workspace }}/wasm_build"
