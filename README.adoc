@@ -33,7 +33,10 @@ Please note that there are currently no automatic updates operational on any pla
 
 This is a quick and easy shuffling method for cubes, where cards can be assigned and distributed based on groups.
 It offers control over predictability as card shuffling can be controlled from being completely random to evenly distributed.
-Instructions on how to use Distribution Shuffle are available link:docs/distribution_shuffle.adoc[here].
+
+**New to CubeShuffle?** Start with the link:docs/beginner_guide.adoc[Beginner Guide] for a simple step-by-step introduction.
+
+For detailed documentation, see link:docs/distribution_shuffle.adoc[Distribution Shuffle Documentation].
 Use Distribution Shuffle with 100% randomness for all piles to speed up a completely random cube shuffle significantly.
 
 
