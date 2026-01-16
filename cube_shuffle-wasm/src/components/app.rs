@@ -207,7 +207,7 @@ impl Component for App {
                                 <AddPile { on_error } on_add={ add_pile }/>
                             </div>
                         </div>
-                        <PileList piles={ self.piles.to_owned() } { delete_pile }/>
+                        <PileList piles={ self.piles.to_owned() } { delete_pile } pack_size={ self.pack_size }/>
                     </>
                 }
             }
