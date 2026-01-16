@@ -2,6 +2,9 @@
 
 :toc:
 
+NOTE: **New to CubeShuffle?** Check out the link:beginner_guide.adoc[Beginner Guide] for a simpler introduction.
+This document provides detailed technical information for users who want a deeper understanding.
+
 == Instructions
 
 === Define piles
